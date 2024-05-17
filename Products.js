@@ -128,24 +128,51 @@ app.post('/user-details', async (request, response) => {
             password,
             birthDate,
             image,
-            userId,
+            isLoggedIn,
             country,
-            stete,
+            states,
             city,
             street,
-            landMark,
+            landmark,
             houseNumber,
             pinCode
-          } = request.body;
-        const usersQuery = await pool.query('INSERT INTO user_details (first_name, middle_name, last_name, age, gender, email, phone, phone2, username, password, birth_date, image) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)',
-        [firstName, middleName, lastName, age, gender, email, phone, phone2, username, password, birthDate, image]
-      );
-        const addressQuery = await pool.query('INSERT INTO user_address (user_id, country, stete, city, street, landmark, housenumber, pincode) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
-        [userId, country, stete, city, street, landMark, houseNumber, pinCode]
-      );
-        
+        } = request.body;
 
-        res.status(200).send('User added successfully');
+        
+        const usersQuery = await pool.query(
+            'INSERT INTO user_details (first_name, middle_name, last_name, age, gender, email, phone, phone2, username, password, birth_date, image,isLoggedIn) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,$13) RETURNING id',
+            [firstName, middleName, lastName, age, gender, email, phone, phone2, username, password, birthDate, image,isLoggedIn]
+        );
+
+       
+        const userId = usersQuery.rows[0].id;
+
+        
+        const addressQuery = await pool.query(
+            'INSERT INTO user_address_ (user_id, country, states, city, street, landmark, housenumber, pincode) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+            [userId, country, states, city, street, landmark, houseNumber, pinCode]
+        );
+
+        response.status(200).send('User added successfully');
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+app.get('/user-details', async (request, response) => {
+    try {
+        const usersQuery = await pool.query('SELECT * FROM user_details');
+        const addressQuery = await pool.query('SELECT * FROM user_address_');
+        
+        const users = usersQuery.rows.map(user => {
+            const addresses = addressQuery.rows.filter(address => address.user_id === user.id);
+            return {
+                ...user,
+                address: addresses 
+            };
+        });
+
+        response.status(200).json(users);
     } catch (error) {
         console.error('Error executing query', error);
         response.status(500).json({ error: 'Internal Server Error' });
