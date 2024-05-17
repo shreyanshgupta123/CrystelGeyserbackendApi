@@ -70,8 +70,13 @@ app.get('/products', async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 app.get('/products/:productname', async (request, response) => {
     const productName = request.params.productname.replace(/\s+/g, "").toLowerCase();
+
+app.get('/products/:productid', async (request, response) => {
+    const productId = request.params.productid;
+
     try {
         const productsQuery = await pool.query('SELECT * FROM products');
         const reviewsQuery = await pool.query('SELECT * FROM product_reviews');
@@ -84,7 +89,11 @@ app.get('/products/:productname', async (request, response) => {
             };
         });
         
+
         const results=products.find(product=>product.productname.replace(/\s+/g, "").toLowerCase() === productName)
+
+        const results=products.find(product=>product.id === productId)
+
         response.status(200).json(results);
     } catch (error) {
         console.error('Error executing query', error);
