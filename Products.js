@@ -113,6 +113,44 @@ app.get('/products/name/:productname', async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 });
+app.post('/user-details', async (request, response) => {
+    try {
+        const {
+            firstName,
+            lastName,
+            middleName,
+            age,
+            gender,
+            email,
+            phone,
+            phone2,
+            username,
+            password,
+            birthDate,
+            image,
+            userId,
+            country,
+            stete,
+            city,
+            street,
+            landMark,
+            houseNumber,
+            pinCode
+          } = request.body;
+        const usersQuery = await pool.query('INSERT INTO user_details (first_name, middle_name, last_name, age, gender, email, phone, phone2, username, password, birth_date, image) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)',
+        [firstName, middleName, lastName, age, gender, email, phone, phone2, username, password, birthDate, image]
+      );
+        const addressQuery = await pool.query('INSERT INTO user_address (user_id, country, stete, city, street, landmark, housenumber, pincode) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+        [userId, country, stete, city, street, landMark, houseNumber, pinCode]
+      );
+        
+
+        res.status(200).send('User added successfully');
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 app.listen(port, () => {
     console.log(`App running on port ${port}.`);
