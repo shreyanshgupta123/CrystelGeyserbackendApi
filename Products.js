@@ -273,6 +273,138 @@ app.delete('/user-details/:userId', async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 });
+app.get('/categories', async (request, response) => {
+    try {
+        const categoriesQuery = await pool.query('SELECT * FROM products_categories');
+        
+
+        response.status(200).json(categoriesQuery.rows);
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+app.post('/categories', async (request, response) => {
+    try {
+        const {
+            category_name,
+            
+        } = request.body;
+
+
+        const existingCategory = await pool.query(
+            'SELECT * FROM products_categories WHERE category_name = $1',
+            [category_name]
+        );
+
+        if (existingCategory.rows.length > 0) {
+            return response.status(400).json({ error: 'category already exists' });
+        }
+
+
+        const usersQuery = await pool.query(
+            'INSERT INTO products_categories (category_name) VALUES ($1)',
+            [category_name]
+        );
+
+        
+
+        response.status(200).json({ message: 'Success'});
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+app.delete('/categories/:categoryId', async (request, response) => {
+    try {
+        const categoryId = request.params.categoryId;
+        const deleteAddressQuery = await pool.query(
+            'DELETE FROM products_categories WHERE id = $1',
+            [categoryId]
+        );
+
+
+
+
+
+
+        response.status(200).send('category deleted successfully');
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+app.get('/categories/:categoryId', async (request, response) => {
+    const categoryId = request.params.categoryId;
+
+    try {
+        const productQuery = await pool.query('SELECT * FROM products_categories WHERE id = $1', [categoryId]);
+        if (productQuery.rows.length === 0) {
+            return response.status(404).json({ error: 'Category not found' });
+        }
+
+
+        response.status(200).json(productQuery.rows);
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+app.post('/products', async (request, response) => {
+    try {
+        const {
+            productName,
+            price,
+            size,
+            rating,
+            bottles,
+            image,
+            description,
+            category_id
+           
+        } = request.body;
+
+
+        const existingUser = await pool.query(
+            'SELECT * FROM products WHERE productName = $1',
+            [productName]
+        );
+
+        if (existingUser.rows.length > 0) {
+            return response.status(400).json({ error: 'product already exists' });
+        }
+
+
+        const usersQuery = await pool.query(
+            'INSERT INTO products (productname, price, size, rating, bottles, image, description, category_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+            [productName, price, size, rating, bottles, image, description,  category_id]
+        );
+
+       
+
+        response.status(200).json({ message: 'Success'});
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+app.get('/products/category/:categoryId', async (request, response) => {
+    const categoryId = request.params.categoryId;
+
+    try {
+        const productQuery = await pool.query('SELECT * FROM products WHERE category_id = $1', [categoryId]);
+        if (productQuery.rows.length === 0) {
+            return response.status(404).json({ error: 'Category not found' });
+        }
+
+
+        response.status(200).json(productQuery.rows);
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 app.listen(port, () => {
     console.log(`App running on port ${port}.`);
 });
