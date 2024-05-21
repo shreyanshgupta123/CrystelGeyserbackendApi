@@ -1,5 +1,5 @@
-const User = require('../models/userModel');
-const UserAddress = require('../models/userAddressModel');
+const User = require('../model/userModel');
+const UserAddress = require('../model/userAddress');
 
 const getAllUsers = async () => {
     return await User.findAll({ include: UserAddress });

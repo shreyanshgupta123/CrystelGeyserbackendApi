@@ -1,9 +1,18 @@
-const Product = require('../models/productModel');
+
+const pool = require('../config/database'); 
 
 const getAllProducts = async () => {
-    return await Product.findAll();
+    const productsQuery = await pool.query('SELECT * FROM products');
+    return productsQuery.rows;
 };
 
-// Additional service methods
 
-module.exports = { getAllProducts };
+const getAllProductReviews = async () => {
+    const reviewsQuery = await pool.query('SELECT * FROM product_reviews');
+    return reviewsQuery.rows;
+};
+
+module.exports = {
+    getAllProducts,
+    getAllProductReviews
+};
