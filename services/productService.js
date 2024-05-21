@@ -36,4 +36,5 @@ const getAllProductReviews = async () => {
 module.exports = {
     getAllProducts,
     getAllProductReviews
+    
 };
