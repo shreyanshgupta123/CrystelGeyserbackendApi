@@ -3,9 +3,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { Pool } = require('pg');
 const { Sequelize } = require("sequelize");
+const cors = require('cors');
+
 const app = express();
 const port = process.env.PORT || 3400;
 const jwt = require('jsonwebtoken');
+app.use(cors());
 const pool = new Pool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
