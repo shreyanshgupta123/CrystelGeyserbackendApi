@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
+const productCategoriesRoutes = require('./routes/productCategoriesRoutes');
 require('dotenv').config();
 const cors = require('cors');
 
@@ -14,5 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/productcategories', productCategoriesRoutes);
+// app.use('/api/users/:userId', userRoutes);
 
 module.exports = app;

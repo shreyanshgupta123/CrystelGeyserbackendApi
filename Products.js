@@ -208,6 +208,28 @@ app.get('/user-details', async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 });
+app.get('/user-details/:userId', async (request, response) => {
+    try {
+        const userId = request.params.userId;
+        const usersQuery = await pool.query('SELECT * FROM user_details');
+        const addressQuery = await pool.query('SELECT * FROM user_address_');
+
+        const users = usersQuery.rows.map(user => {
+            const addresses = addressQuery.rows.filter(address => address.user_id === user.id);
+            return {
+                ...user,
+                address: addresses
+            };
+        });
+        const result=users.find(user=>user.id === userId)
+    
+
+        response.status(200).json(result);
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 app.put('/user-details/:userId', async (request, response) => {
     try {
         const userId = request.params.userId;
