@@ -7,6 +7,10 @@ exports.getProducts = async (req, res) => {
             productService.getAllProductReviews()
         ]);
 
+        if (!products || !reviews) {
+            return res.status(404).json({ message: 'Products or reviews not found' });
+        }
+
         const productsWithReviews = products.map(product => {
             const productReviews = reviews.filter(review => review.product_id === product.id);
             return {
@@ -21,4 +25,3 @@ exports.getProducts = async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };
-
