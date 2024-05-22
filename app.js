@@ -4,6 +4,7 @@ const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
 const productCategoriesRoutes = require('./routes/productCategoriesRoutes');
 const cartRoutes = require('./routes/cartRoutes');
+const currentOrderRoutes = require('./routes/currentOrdersRoutes');
 require('dotenv').config();
 const cors = require('cors');
 
@@ -18,6 +19,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/productcategories', productCategoriesRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/currentorders', currentOrderRoutes);
 // app.use('/api/users/:userId', userRoutes);
 
 module.exports = app;

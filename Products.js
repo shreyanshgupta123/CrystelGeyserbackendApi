@@ -551,7 +551,79 @@ app.delete('/cart/:order_id', async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 });
+app.post('/current_order', async (request, response) => {
+    try {
+        const {
+            user_id,
+            price,
+            unit,
+            expected_delivery,
+            payment_method
+        } = request.body;
 
+       
+
+        const userResult = await pool.query(
+            'SELECT id FROM user_details WHERE id = $1',
+            [user_id]
+        );
+
+        if (userResult.rows.length === 0) {
+            return response.status(404).json({ error: 'user not found' });
+        }
+
+        const  userid  = userResult.rows[0].id;
+        console.log(userid)
+        console.log(userResult)
+
+        const insertQuery = await pool.query(
+            'INSERT INTO current_orders (user_id, price, unit, expected_delivery, payment_method) VALUES ($1, $2, $3, $4, $5)',
+            [userid, price, unit, expected_delivery, payment_method]
+        );
+
+        response.status(200).json({ message: 'Success' });
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+app.get('/current_order', async (request, response) => {
+    try {
+        const cartItems = await pool.query('SELECT * FROM current_order_details');
+
+        if (cartItems.rows.length === 0) {
+            return response.status(404).json({ error: 'No orders' });
+        }
+
+        response.status(200).json(cartItems.rows);
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+app.delete('/current_order/:order_id', async (request, response) => {
+    try {
+        const { order_id } = request.params;
+
+        const existingProduct = await pool.query(
+            'SELECT * FROM current_order_details WHERE id = $1',
+            [order_id]
+        );
+
+        if (existingProduct.rows.length === 0) {
+            return response.status(404).json({ error: 'Order not found ' });
+        }
+
+        const deleteQuery = 'DELETE FROM current_order_details WHERE id = $1';
+
+        await pool.query(deleteQuery, [order_id]);
+
+        response.status(200).json({ message: 'Order deleted successfully' });
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 
 
