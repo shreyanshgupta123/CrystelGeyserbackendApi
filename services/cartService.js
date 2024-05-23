@@ -16,9 +16,6 @@ const addToCart = async (request, response) => {
     try {
         const {
             quantity,
-            discount,
-            delivery_charges,
-            refundable_deposit,
             productid
         } = request.body;
 
@@ -43,8 +40,8 @@ const addToCart = async (request, response) => {
         const { price } = priceResult.rows[0];
 
         const insertQuery = await pool.query(
-            'INSERT INTO cart (quantity, discount, delivery_charges, refundable_deposit, productid, product_price) VALUES ($1, $2, $3, $4, $5, $6)',
-            [quantity, discount, delivery_charges, refundable_deposit, productid, price]
+            'INSERT INTO cart (quantity ,productid) VALUES ($1, $2)',
+            [quantity,  productid]
         );
 
         response.status(200).json({ message: 'Success' });
@@ -72,9 +69,7 @@ const updateCartItems = async (request, response) => {
         const { order_id } = request.params;
         const {
             quantity,
-            discount,
-            delivery_charges,
-            refundable_deposit,
+           
         } = request.body;
 
         const existingProduct = await pool.query(
@@ -88,18 +83,13 @@ const updateCartItems = async (request, response) => {
 
         const updateQuery = `
             UPDATE cart
-            SET quantity = $1,
-                discount = $2,
-                delivery_charges = $3,
-                refundable_deposit = $4
-            WHERE order_id = $5
+            SET quantity = $1
+                
+            WHERE order_id = $2
         `;
 
         const values = [
             quantity !== undefined ? quantity : existingProduct.rows[0].quantity,
-            discount !== undefined ? discount : existingProduct.rows[0].discount,
-            delivery_charges !== undefined ? delivery_charges : existingProduct.rows[0].delivery_charges,
-            refundable_deposit !== undefined ? refundable_deposit : existingProduct.rows[0].refundable_deposit,
             order_id
         ];
 

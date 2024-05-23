@@ -1,6 +1,7 @@
 const { Pool } = require('pg');
 const config = require('../config/config');
 const jwt = require('jsonwebtoken');
+const bcrypt = require("bcryptjs"); 
 
 const pool = new Pool({
     host: config.db.host,
@@ -171,6 +172,37 @@ const getUserDetailsById = async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
+const getUserDetailsByName = async (request, response) => {
+    try {
+        const { username, password } = request.body;
+
+        
+        const userResult = await pool.query('SELECT password FROM user_details WHERE username = $1', [username]);
+
+        if (userResult.rows.length === 0) {
+            return response.status(400).json({ error: 'User not found' });
+        }
+
+        const hashedPassword = userResult.rows[0].password;
+        const token = jwt.sign({ username }, 'your_secret_key', { expiresIn: '7d' });
+
+
+       
+        const isMatch = await bcrypt.compare(password, hashedPassword);
+
+        if (isMatch) {
+           
+            const usersQuery = await pool.query('SELECT * FROM user_details WHERE username = $1', [username]);
+            return response.status(200).json({ message: "Success" ,token:token});
+        } else {
+            return response.status(400).json({ error: 'Invalid credentials' });
+        }
+
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+};
 
 
 
@@ -181,6 +213,7 @@ module.exports = {
     createUserDetails,
     updateUserDetails,
     deleteUserDetails,
-    getUserDetailsById
+    getUserDetailsById,
+    getUserDetailsByName
 };
 

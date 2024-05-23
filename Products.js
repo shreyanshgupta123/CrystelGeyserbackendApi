@@ -6,6 +6,7 @@ const { Sequelize } = require("sequelize");
 const app = express();
 const port = process.env.PORT || 3400;
 const jwt = require('jsonwebtoken');
+const bcrypt = require("bcryptjs"); 
 const pool = new Pool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -165,11 +166,12 @@ app.post('/user-details', async (request, response) => {
         if (existingUser.rows.length > 0) {
             return response.status(400).json({ error: 'Username already exists' });
         }
+        const hashedPassword = await bcrypt.hash(password, 8);
 
 
         const usersQuery = await pool.query(
             'INSERT INTO user_details (first_name, middle_name, last_name, age, gender, email, phone, phone2, username, password, birth_date, image,isLoggedIn) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,$13) RETURNING id',
-            [firstName, middleName, lastName, age, gender, email, phone, phone2, username, password, birthDate, image, isLoggedIn]
+            [firstName, middleName, lastName, age, gender, email, phone, phone2, username, hashedPassword, birthDate, image, isLoggedIn]
         );
 
         const userId = usersQuery.rows[0].id;
@@ -208,6 +210,40 @@ app.get('/user-details', async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
+
+app.post('/login-details', async (request, response) => {
+    try {
+        const { username, password } = request.body;
+
+        
+        const userResult = await pool.query('SELECT password FROM user_details WHERE username = $1', [username]);
+
+        if (userResult.rows.length === 0) {
+            return response.status(400).json({ error: 'User not found' });
+        }
+
+        const hashedPassword = userResult.rows[0].password;
+        const token = jwt.sign({ username }, 'your_secret_key', { expiresIn: '7d' });
+
+
+       
+        const isMatch = await bcrypt.compare(password, hashedPassword);
+
+        if (isMatch) {
+           
+            const usersQuery = await pool.query('SELECT * FROM user_details WHERE username = $1', [username]);
+            return response.status(200).json({ message: "Success" ,token:token});
+        } else {
+            return response.status(400).json({ error: 'Invalid credentials' });
+        }
+
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 app.get('/user-details/:userId', async (request, response) => {
     try {
         const userId = request.params.userId;
@@ -624,6 +660,54 @@ app.delete('/current_order/:order_id', async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 });
+app.post('/cancelled_order', async (request, response) => {
+    try {
+        const {
+            user_id,
+            product_id,
+            price,
+            unit,
+            expected_delivery,
+            payment_method,
+            cancellation_reason
+        } = request.body;
+
+       
+
+        const userResult = await pool.query(
+            'SELECT id FROM user_details WHERE id = $1',
+            [user_id]
+        );
+        const productResult = await pool.query(
+            'SELECT id FROM products WHERE id = $1',
+            [product_id]
+        );
+
+        if (userResult.rows.length === 0) {
+            return response.status(404).json({ error: 'user not found' });
+        }
+        if (productResult.rows.length === 0) {
+            return response.status(404).json({ error: 'product not found' });
+        }
+
+
+
+        const  userid  = userResult.rows[0].id;
+        const  productid  = productResult.rows[0].id;
+        
+
+        const insertQuery = await pool.query(
+            'INSERT INTO cancelled_orders (user_id,product_id, price, unit, expected_delivery, payment_method,cancellation_reason) VALUES ($1, $2, $3, $4, $5,$6,$7)',
+            [userid,productid, price, unit, expected_delivery, payment_method,cancellation_reason]
+        );
+
+        response.status(200).json({ message: 'Success' });
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 
 
 
