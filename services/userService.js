@@ -227,7 +227,7 @@ const getUserDetailsByName = async (request, response) => {
 
         if (isMatch) {
             const token = jwt.sign({ userId: user.id }, 'your_secret_key', { expiresIn: '7d' });
-            return response.status(200).json({ message: 'Success', token });
+            return response.status(200).json({ message: 'Success', token ,userId: user.id});
         } else {
             return response.status(400).json({ error: 'Invalid credentials' });
         }

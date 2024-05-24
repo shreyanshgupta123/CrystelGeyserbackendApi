@@ -707,7 +707,34 @@ app.post('/cancelled_order', async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 });
+app.post('/wishlist', async (request, response) => {
+    try {
+        const {
+            productid
+        } = request.body;
 
+        const existingProduct = await pool.query(
+            'SELECT * FROM wishlist WHERE product_id = $1',
+            [productid]
+        );
+
+        if (existingProduct.rows.length > 0) {
+            return response.status(400).json({ error: 'Product already exists in the wishlist' });
+        }
+
+        
+
+        const insertQuery = await pool.query(
+            'INSERT INTO wishlist ( product_id) VALUES ($1)',
+            [ productid]
+        );
+
+        response.status(200).json({ message: 'Success' });
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 
 
