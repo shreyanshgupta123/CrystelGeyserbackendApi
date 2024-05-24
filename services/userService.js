@@ -68,10 +68,11 @@ const getUserDetails = async (request, response) => {
         if (existingUser.rows.length > 0) {
             return response.status(400).json({ error: 'Username already exists' });
         }
+        const hashedPassword = bcrypt.hashSync(password, 8);
 
         const usersQuery = await pool.query(
             'INSERT INTO user_details (first_name, middle_name, last_name, age, gender, email, phone, phone2, username, password, birth_date, image, isLoggedIn) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id',
-            [firstName, middleName, lastName, age, gender, email, phone, phone2, username, password, birthDate, image, isLoggedIn]
+            [firstName, middleName, lastName, age, gender, email, phone, phone2, username, hashedPassword, birthDate, image, isLoggedIn]
         );
 
         const userId = usersQuery.rows[0].id;
