@@ -205,26 +205,29 @@ const getUserDetailsById = async (request, response) => {
 };
 const getUserDetailsByName = async (request, response) => {
     try {
-        const { username, password } = request.body;
+        const { username, password } = request.body; 
 
         
-        const userResult = await pool.query('SELECT password FROM user_details WHERE username = $1', [username]);
+        let userResult = await pool.query('SELECT * FROM user_details WHERE username = $1', [username]);
 
+       
+        if (userResult.rows.length === 0) {
+            userResult = await pool.query('SELECT * FROM user_details WHERE email = $1', [username]);
+        }
+
+        
         if (userResult.rows.length === 0) {
             return response.status(400).json({ error: 'User not found' });
         }
 
-        const hashedPassword = userResult.rows[0].password;
-        const token = jwt.sign({ username }, 'your_secret_key', { expiresIn: '7d' });
+        const user = userResult.rows[0];
+        const hashedPassword = user.password;
 
-
-       
         const isMatch = await bcrypt.compare(password, hashedPassword);
 
         if (isMatch) {
-           
-            const usersQuery = await pool.query('SELECT * FROM user_details WHERE username = $1', [username]);
-            return response.status(200).json({ message: "Success" ,token:token});
+            const token = jwt.sign({ userId: user.id }, 'your_secret_key', { expiresIn: '7d' });
+            return response.status(200).json({ message: 'Success', token });
         } else {
             return response.status(400).json({ error: 'Invalid credentials' });
         }
