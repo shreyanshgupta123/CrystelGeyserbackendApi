@@ -64,6 +64,20 @@ const getCartItems = async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
+const getCartItemFeatures = async (request, response) => {
+    try {
+        const cartItems = await pool.query('SELECT * FROM cart_features');
+
+        if (cartItems.rows.length === 0) {
+            return response.status(404).json({ error: 'No features  in the cart features' });
+        }
+
+        response.status(200).json(cartItems.rows);
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+};
 const updateCartItems = async (request, response) => {
     try {
         const { order_id } = request.params;
@@ -130,5 +144,6 @@ module.exports = {
     addToCart,
     getCartItems,
     updateCartItems,
-    deleteCartItems
+    deleteCartItems,
+    getCartItemFeatures
 };

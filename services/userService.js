@@ -35,7 +35,8 @@ const getUserDetails = async (request, response) => {
         console.error('Error executing query', error);
         response.status(500).json({ error: 'Internal Server Error' });
     }
-};const createUserDetails = async (request, response) => {
+};
+const createUserDetails = async (request, response) => {
     try {
         const {
             firstName,
@@ -60,36 +61,65 @@ const getUserDetails = async (request, response) => {
             pinCode
         } = request.body;
 
-        const existingUser = await pool.query(
+       
+        const existingUsername = await pool.query(
             'SELECT * FROM user_details WHERE username = $1',
             [username]
         );
+        const existingEmail = await pool.query(
+            'SELECT * FROM user_details WHERE email = $1',
+            [email]
+        );
+        const existingPhone = await pool.query(
+            'SELECT * FROM user_details WHERE phone = $1',
+            [phone]
+        );
 
-        if (existingUser.rows.length > 0) {
+        if (existingUsername.rows.length > 0 ) {
             return response.status(400).json({ error: 'Username already exists' });
         }
+
+       
+        
+
+        if (existingEmail.rows.length > 0) {
+            return response.status(400).json({ error: 'Email already exists' });
+        }
+
+        
+      
+
+        if (existingPhone.rows.length > 0) {
+            return response.status(400).json({ error: 'Phone already exists' });
+        }
+
         const hashedPassword = bcrypt.hashSync(password, 8);
 
         const usersQuery = await pool.query(
-            'INSERT INTO user_details (first_name, middle_name, last_name, age, gender, email, phone, phone2, username, password, birth_date, image, isLoggedIn) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id',
+            `INSERT INTO user_details 
+            (first_name, middle_name, last_name, age, gender, email, phone, phone2, username, password, birth_date, image, isLoggedIn) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id`,
             [firstName, middleName, lastName, age, gender, email, phone, phone2, username, hashedPassword, birthDate, image, isLoggedIn]
         );
 
         const userId = usersQuery.rows[0].id;
 
         const addressQuery = await pool.query(
-            'INSERT INTO user_address_ (user_id, country, states, city, street, landmark, housenumber, pincode) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+            `INSERT INTO user_address_ 
+            (user_id, country, states, city, street, landmark, housenumber, pincode) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
             [userId, country, states, city, street, landmark, houseNumber, pinCode]
         );
 
-        const token = jwt.sign({ userId }, 'your_secret_key', { expiresIn: '7d' });
+        // const token = jwt.sign({ userId }, 'your_secret_key', { expiresIn: '7d' });
 
-        response.status(200).json({ message: 'Success', token });
+        response.status(200).json({ message: 'Success' });
     } catch (error) {
         console.error('Error executing query', error);
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
 const updateUserDetails = async (request, response) => {
     try {
         const userId = request.params.userId;
