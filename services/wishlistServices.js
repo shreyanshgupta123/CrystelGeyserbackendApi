@@ -58,20 +58,15 @@ const getWishlist = async (request, response) => {
 };
 const deleteWishlist = async (request, response) => {
     try {
-        const { order_id } = request.params;
-
-        const existingProduct = await pool.query(
-            'SELECT * FROM wishlist WHERE id = $1',
-            [order_id]
+        const orderId = request.params.order_id;
+        const deleteAddressQuery = await pool.query(
+            'DELETE FROM wishlist WHERE id = $1',
+            [orderId]
         );
 
-        if (existingProduct.rows.length === 0) {
-            return response.status(404).json({ error: 'Order not found ' });
-        }
+       
 
-        
-
-        response.status(200).json({ message: 'item deleted successfully' });
+        response.status(200).send('item deleted successfully');
     } catch (error) {
         console.error('Error executing query', error);
         response.status(500).json({ error: 'Internal Server Error' });
