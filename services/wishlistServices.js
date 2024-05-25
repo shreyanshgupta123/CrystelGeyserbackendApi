@@ -17,11 +17,12 @@ const pool = new Pool({
 const createWishlist = async (request, response) => {
     try {
         const {
-            productid
+            productid,
+            userid
         } = request.body;
 
         const existingProduct = await pool.query(
-            'SELECT * FROM wishlist WHERE product_id = $1',
+            'SELECT * FROM products_wishlist WHERE product_id = $1',
             [productid]
         );
 
@@ -32,8 +33,8 @@ const createWishlist = async (request, response) => {
         
 
         const insertQuery = await pool.query(
-            'INSERT INTO wishlist ( product_id) VALUES ($1)',
-            [ productid]
+            'INSERT INTO wishlist ( product_id,userid) VALUES ($1,$2)',
+            [ productid,userid]
         );
 
         response.status(200).json({ message: 'Success' });
@@ -44,7 +45,7 @@ const createWishlist = async (request, response) => {
 };
 const getWishlist = async (request, response) => {
     try {
-        const cartItems = await pool.query('SELECT * FROM wishlist');
+        const cartItems = await pool.query('SELECT * FROM products_wishlist');
 
         if (cartItems.rows.length === 0) {
             return response.status(404).json({ error: 'No items' });
@@ -60,7 +61,7 @@ const deleteWishlist = async (request, response) => {
     try {
         const orderId = request.params.order_id;
         const deleteAddressQuery = await pool.query(
-            'DELETE FROM wishlist WHERE id = $1',
+            'DELETE FROM products_wishlist WHERE id = $1',
             [orderId]
         );
 
