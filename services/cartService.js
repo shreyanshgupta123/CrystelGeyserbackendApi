@@ -16,11 +16,12 @@ const addToCart = async (request, response) => {
     try {
         const {
             quantity,
-            productid
+            productid,
+            userid
         } = request.body;
 
         const existingProduct = await pool.query(
-            'SELECT * FROM cart WHERE productid = $1',
+            'SELECT * FROM carts WHERE product_id = $1',
             [productid]
         );
 
@@ -40,8 +41,8 @@ const addToCart = async (request, response) => {
         const { price } = priceResult.rows[0];
 
         const insertQuery = await pool.query(
-            'INSERT INTO cart (quantity ,productid) VALUES ($1, $2)',
-            [quantity,  productid]
+            'INSERT INTO carts (quantity ,user_id,product_id) VALUES ($1, $2,$3)',
+            [quantity, userid, productid]
         );
 
         response.status(200).json({ message: 'Success' });
@@ -52,7 +53,7 @@ const addToCart = async (request, response) => {
 };
 const getCartItems = async (request, response) => {
     try {
-        const cartItems = await pool.query('SELECT * FROM cart');
+        const cartItems = await pool.query('SELECT * FROM carts');
 
         if (cartItems.rows.length === 0) {
             return response.status(404).json({ error: 'No items in the cart' });
@@ -83,11 +84,11 @@ const updateCartItems = async (request, response) => {
         const { order_id } = request.params;
         const {
             quantity,
-           
+            userid
         } = request.body;
 
         const existingProduct = await pool.query(
-            'SELECT * FROM cart WHERE order_id = $1',
+            'SELECT * FROM carts WHERE order_id = $1',
             [order_id]
         );
 
@@ -96,14 +97,15 @@ const updateCartItems = async (request, response) => {
         }
 
         const updateQuery = `
-            UPDATE cart
-            SET quantity = $1
-                
-            WHERE order_id = $2
+            UPDATE carts
+            SET quantity = $1,
+            SET user_id = $2   
+            WHERE order_id = $3
         `;
 
         const values = [
             quantity !== undefined ? quantity : existingProduct.rows[0].quantity,
+            userid,
             order_id
         ];
 
@@ -122,7 +124,7 @@ const deleteCartItems = async (request, response) => {
         const { order_id } = request.params;
 
         const existingProduct = await pool.query(
-            'SELECT * FROM cart WHERE order_id = $1',
+            'SELECT * FROM carts WHERE order_id = $1',
             [order_id]
         );
 
@@ -130,7 +132,7 @@ const deleteCartItems = async (request, response) => {
             return response.status(404).json({ error: 'Order not found in the cart' });
         }
 
-        const deleteQuery = 'DELETE FROM cart WHERE order_id = $1';
+        const deleteQuery = 'DELETE FROM carts WHERE order_id = $1';
 
         await pool.query(deleteQuery, [order_id]);
 

@@ -735,7 +735,25 @@ app.post('/wishlist', async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 });
+app.get('/priceasc', async (request, response) => {
+    try {
+        const productsQuery = await pool.query('SELECT * FROM products ORDER BY price ASC');
+        const reviewsQuery = await pool.query('SELECT * FROM product_reviews');
 
+        const products = productsQuery.rows.map(product => {
+            const reviews = reviewsQuery.rows.filter(review => review.product_id === product.id);
+            return {
+                ...product,
+                reviews: reviews
+            };
+        });
+
+        response.status(200).json(products);
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 
 app.listen(port, () => {

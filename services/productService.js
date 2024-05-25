@@ -144,7 +144,64 @@ const addProduct = async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
+const getAllProductsInAscendingOrder = async (request, response) => {
+    try {
+        const productsQuery = await pool.query('SELECT * FROM products ORDER BY price ASC');
+        const reviewsQuery = await pool.query('SELECT * FROM product_reviews');
 
+        const products = productsQuery.rows.map(product => {
+            const reviews = reviewsQuery.rows.filter(review => review.product_id === product.id);
+            return {
+                ...product,
+                reviews: reviews
+            };
+        });
+
+        response.status(200).json(products);
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+const getAllProductsInDescendingOrder = async (request, response) => {
+    try {
+        const productsQuery = await pool.query('SELECT * FROM products ORDER BY price DESC');
+        const reviewsQuery = await pool.query('SELECT * FROM product_reviews');
+
+        const products = productsQuery.rows.map(product => {
+            const reviews = reviewsQuery.rows.filter(review => review.product_id === product.id);
+            return {
+                ...product,
+                reviews: reviews
+            };
+        });
+
+        response.status(200).json(products);
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+const getAllProductsInAscendingOrderByRating = async (request, response) => {
+    try {
+        const productsQuery = await pool.query('SELECT * FROM products ORDER BY rating ASC');
+        const reviewsQuery = await pool.query('SELECT * FROM product_reviews');
+
+        const products = productsQuery.rows.map(product => {
+            const reviews = reviewsQuery.rows.filter(review => review.product_id === product.id);
+            return {
+                ...product,
+                reviews: reviews
+            };
+        });
+
+        response.status(200).json(products);
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+};
 
     
 
@@ -154,5 +211,8 @@ module.exports = {
     getProductsById,
     deleteProductsById,
     getProductsByName,
-    addProduct
+    addProduct,
+    getAllProductsInAscendingOrder,
+    getAllProductsInDescendingOrder
+
 };

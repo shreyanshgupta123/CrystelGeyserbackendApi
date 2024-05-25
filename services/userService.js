@@ -94,12 +94,13 @@ const createUserDetails = async (request, response) => {
         }
 
         const hashedPassword = bcrypt.hashSync(password, 8);
-
+        const dateOnly = new Date(birthDate).toISOString().split('T')[0];
+        console.log(dateOnly)
         const usersQuery = await pool.query(
             `INSERT INTO user_details 
             (first_name, middle_name, last_name, age, gender, email, phone, phone2, username, password, birth_date, image, isLoggedIn) 
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id`,
-            [firstName, middleName, lastName, age, gender, email, phone, phone2, username, hashedPassword, birthDate, image, isLoggedIn]
+            [firstName, middleName, lastName, age, gender, email, phone, phone2, username, hashedPassword, dateOnly, image, isLoggedIn]
         );
 
         const userId = usersQuery.rows[0].id;
@@ -145,10 +146,10 @@ const updateUserDetails = async (request, response) => {
             houseNumber,
             pinCode
         } = request.body;
-
+        const formattedBirthDate = new Date(birthDate).toISOString().slice(0, 10);
         const updateUserQuery = await pool.query(
             'UPDATE user_details SET first_name = $1, middle_name = $2, last_name = $3, age = $4, gender = $5, email = $6, phone = $7, phone2 = $8, username = $9, password = $10, birth_date = $11, image = $12, isLoggedIn = $13 WHERE id = $14',
-            [firstName, middleName, lastName, age, gender, email, phone, phone2, username, password, birthDate, image, isLoggedIn, userId]
+            [firstName, middleName, lastName, age, gender, email, phone, phone2, username, password, formattedBirthDate, image, isLoggedIn, userId]
         );
 
         const updateAddressQuery = await pool.query(
@@ -191,6 +192,7 @@ const getUserDetailsById = async (request, response) => {
             const addresses = addressQuery.rows.filter(address => address.user_id === user.id);
             return {
                 ...user,
+                birthdate: user.birthdate.toISOString().split('T')[0],
                 address: addresses
             };
         });
