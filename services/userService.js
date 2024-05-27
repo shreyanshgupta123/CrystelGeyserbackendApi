@@ -192,7 +192,7 @@ const getUserDetailsById = async (request, response) => {
             const addresses = addressQuery.rows.filter(address => address.user_id === user.id);
             return {
                 ...user,
-                birthdate: user.birthdate.toISOString().split('T')[0],
+                // birthdate: user.birthdate.toISOString().split('T')[0],
                 address: addresses
             };
         });
