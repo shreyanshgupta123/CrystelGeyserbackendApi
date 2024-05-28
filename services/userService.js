@@ -146,10 +146,10 @@ const updateUserDetails = async (request, response) => {
             houseNumber,
             pinCode
         } = request.body;
-        const formattedBirthDate = new Date(birthDate).toISOString().slice(0, 10);
+        // const formattedBirthDate = new Date(birthDate).toISOString().slice(0, 10);
         const updateUserQuery = await pool.query(
             'UPDATE user_details SET first_name = $1, middle_name = $2, last_name = $3, age = $4, gender = $5, email = $6, phone = $7, phone2 = $8, username = $9, password = $10, birth_date = $11, image = $12, isLoggedIn = $13 WHERE id = $14',
-            [firstName, middleName, lastName, age, gender, email, phone, phone2, username, password, formattedBirthDate, image, isLoggedIn, userId]
+            [firstName, middleName, lastName, age, gender, email, phone, phone2, username, password, birthDate, image, isLoggedIn, userId]
         );
 
         const updateAddressQuery = await pool.query(
