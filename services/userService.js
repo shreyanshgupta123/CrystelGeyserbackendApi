@@ -21,15 +21,18 @@ const getUserDetails = async (request, response) => {
     try {
         const usersQuery = await pool.query('SELECT * FROM user_details');
         const addressQuery = await pool.query('SELECT * FROM user_address_');
+        const ordersQuery = await pool.query('SELECT * FROM my_order');
+        const wishlistQuery = await pool.query('SELECT * FROM my_order');
 
         const users = usersQuery.rows.map(user => {
             const addresses = addressQuery.rows.filter(address => address.user_id === user.id);
+            const orders = ordersQuery.rows.filter(order => order.user_id === user.id);
             return {
                 ...user,
-                address: addresses
+                address: addresses,
+                orders: orders
             };
         });
-
         response.status(200).json(users);
     } catch (error) {
         console.error('Error executing query', error);
@@ -39,9 +42,9 @@ const getUserDetails = async (request, response) => {
 const createUserDetails = async (request, response) => {
     try {
         const {
-            firstName,
-            lastName,
-            middleName,
+            first_name,
+            last_name,
+            middle_name,
             age,
             gender,
             email,
@@ -49,7 +52,7 @@ const createUserDetails = async (request, response) => {
             phone2,
             username,
             password,
-            birthDate,
+            birth_date,
             image,
             isLoggedIn,
             country,
@@ -57,7 +60,7 @@ const createUserDetails = async (request, response) => {
             city,
             street,
             landmark,
-            houseNumber,
+            housenumber,
             pinCode
         } = request.body;
 
@@ -94,13 +97,11 @@ const createUserDetails = async (request, response) => {
         }
 
         const hashedPassword = bcrypt.hashSync(password, 8);
-        const dateOnly = new Date(birthDate).toISOString().split('T')[0];
-        console.log(dateOnly)
         const usersQuery = await pool.query(
             `INSERT INTO user_details 
             (first_name, middle_name, last_name, age, gender, email, phone, phone2, username, password, birth_date, image, isLoggedIn) 
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id`,
-            [firstName, middleName, lastName, age, gender, email, phone, phone2, username, hashedPassword, dateOnly, image, isLoggedIn]
+            [first_name, middle_name, last_name, age, gender, email, phone, phone2, username, hashedPassword, birth_date, image, isLoggedIn]
         );
 
         const userId = usersQuery.rows[0].id;
@@ -109,7 +110,7 @@ const createUserDetails = async (request, response) => {
             `INSERT INTO user_address_ 
             (user_id, country, states, city, street, landmark, housenumber, pincode) 
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-            [userId, country, states, city, street, landmark, houseNumber, pinCode]
+            [userId, country, states, city, street, landmark, housenumber, pinCode]
         );
 
         // const token = jwt.sign({ userId }, 'your_secret_key', { expiresIn: '7d' });
@@ -125,9 +126,9 @@ const updateUserDetails = async (request, response) => {
     try {
         const userId = request.params.userId;
         const {
-            firstName,
-            lastName,
-            middleName,
+            first_name,
+            last_name,
+            middle_name,
             age,
             gender,
             email,
@@ -135,7 +136,7 @@ const updateUserDetails = async (request, response) => {
             phone2,
             username,
             password,
-            birthDate,
+            birth_date,
             image,
             isLoggedIn,
             country,
@@ -146,10 +147,10 @@ const updateUserDetails = async (request, response) => {
             houseNumber,
             pinCode
         } = request.body;
-        // const formattedBirthDate = new Date(birthDate).toISOString().slice(0, 10);
+        const hashedPassword = bcrypt.hashSync(password, 8);
         const updateUserQuery = await pool.query(
             'UPDATE user_details SET first_name = $1, middle_name = $2, last_name = $3, age = $4, gender = $5, email = $6, phone = $7, phone2 = $8, username = $9, password = $10, birth_date = $11, image = $12, isLoggedIn = $13 WHERE id = $14',
-            [firstName, middleName, lastName, age, gender, email, phone, phone2, username, password, birthDate, image, isLoggedIn, userId]
+            [first_name, middle_name, last_name, age, gender, email, phone, phone2, username, hashedPassword, birth_date, image, isLoggedIn, userId]
         );
 
         const updateAddressQuery = await pool.query(
@@ -163,6 +164,7 @@ const updateUserDetails = async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
 const deleteUserDetails = async (request, response) => {
     try {
         const userId = request.params.userId;
