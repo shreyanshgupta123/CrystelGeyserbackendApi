@@ -10,6 +10,7 @@ const deliveredOrderRoutes = require('./routes/deliveredOrdersRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
 const orderRoutes = require('./routes/ordersRoutes');
 const historyOrderRoutes = require('./routes/ordersHistoryRoutes');
+const subscriptionRoutes = require('./routes/subscriptionRoutes');
 require('dotenv').config();
 const cors = require('cors');
 
@@ -18,6 +19,11 @@ app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+// app.post('/login', (req, res) => {
+//     const { username, password } = req.body;
+//     const accessToken = jwt.sign({ username: username, role: user.role }, SECRET_KEY, { expiresIn: '1h' });
+//     res.json({ accessToken });
+// });
 
 // app.use('/api/products', productRoutes);
 
@@ -55,6 +61,7 @@ app.use('/api/deliveredorders', deliveredOrderRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/ordershistory', historyOrderRoutes);
+app.use('/api/subscription', subscriptionRoutes);
 // app.use('/api/users/:userId', userRoutes);
 
 module.exports = app;

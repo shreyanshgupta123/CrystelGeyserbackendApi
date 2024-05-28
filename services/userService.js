@@ -22,15 +22,20 @@ const getUserDetails = async (request, response) => {
         const usersQuery = await pool.query('SELECT * FROM user_details');
         const addressQuery = await pool.query('SELECT * FROM user_address_');
         const ordersQuery = await pool.query('SELECT * FROM my_order');
-        const wishlistQuery = await pool.query('SELECT * FROM my_order');
+        const wishlistQuery = await pool.query('SELECT * FROM products_wishlist');
+        const subscriptionQuery = await pool.query('SELECT * FROM subscription');
 
         const users = usersQuery.rows.map(user => {
             const addresses = addressQuery.rows.filter(address => address.user_id === user.id);
             const orders = ordersQuery.rows.filter(order => order.user_id === user.id);
+            const wishlists=wishlistQuery.rows.filter(wishlist => wishlist.user_id === user.id);
+            const subscriptions=subscriptionQuery.rows.filter(subscription => subscription.user_id === user.id);
             return {
                 ...user,
                 address: addresses,
-                orders: orders
+                orders: orders,
+                wishlist:wishlists,
+                subscription:subscriptions
             };
         });
         response.status(200).json(users);
@@ -189,13 +194,21 @@ const getUserDetailsById = async (request, response) => {
         const userId = request.params.userId;
         const usersQuery = await pool.query('SELECT * FROM user_details');
         const addressQuery = await pool.query('SELECT * FROM user_address_');
+        const ordersQuery = await pool.query('SELECT * FROM my_order');
+        const wishlistQuery = await pool.query('SELECT * FROM products_wishlist');
+        const subscriptionQuery = await pool.query('SELECT * FROM subscription');
 
         const users = usersQuery.rows.map(user => {
             const addresses = addressQuery.rows.filter(address => address.user_id === user.id);
+            const orders = ordersQuery.rows.filter(order => order.user_id === user.id);
+            const wishlists=wishlistQuery.rows.filter(wishlist => wishlist.user_id === user.id);
+            const subscriptions=subscriptionQuery.rows.filter(subscription => subscription.user_id === user.id);
             return {
                 ...user,
-                // birthdate: user.birthdate.toISOString().split('T')[0],
-                address: addresses
+                address: addresses,
+                orders: orders,
+                wishlist:wishlists,
+                subscription:subscriptions
             };
         });
         const result=users.find(user=>user.id === userId)
