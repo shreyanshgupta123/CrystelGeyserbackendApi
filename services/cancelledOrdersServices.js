@@ -96,8 +96,29 @@ const deleteCancelledOrders = async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
+const getCancelledOrderById = async (request, response) => {
+    try {
+        const orderId = request.params.order_id;
+
+        const existingOrder = await pool.query(
+            'SELECT * FROM cancelled_orders WHERE id = $1',
+            [orderId]
+        );
+
+        if (existingOrder.rows.length === 0) {
+            return response.status(404).json({ error: 'Order not found' });
+        }
+
+        response.status(200).json(existingOrder.rows[0]);
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
 module.exports = {
     addCancelledOrders,
     getCancelledOrders,
-    deleteCancelledOrders
+    deleteCancelledOrders,
+    getCancelledOrderById
 };

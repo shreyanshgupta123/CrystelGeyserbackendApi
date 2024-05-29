@@ -24,15 +24,25 @@ const getUserDetails = async (request, response) => {
         const ordersQuery = await pool.query('SELECT * FROM my_order');
         const wishlistQuery = await pool.query('SELECT * FROM products_wishlist');
         const subscriptionQuery = await pool.query('SELECT * FROM subscription');
+        const alternateAddressQuery = await pool.query('SELECT * FROM alternate_address');
 
         const users = usersQuery.rows.map(user => {
             const addresses = addressQuery.rows.filter(address => address.user_id === user.id);
             const orders = ordersQuery.rows.filter(order => order.user_id === user.id);
             const wishlists=wishlistQuery.rows.filter(wishlist => wishlist.user_id === user.id);
             const subscriptions=subscriptionQuery.rows.filter(subscription => subscription.user_id === user.id);
+            // const alternateaddresses=alternateAddressQuery.rows.filter(alternateaddress => alternateaddress.user_id === user.id);
+            const combinedAddresses = addresses.map(address => {
+                return {
+                    ...address,
+                    alternateAddresses: alternateAddressQuery.rows.filter(alternateaddress => alternateaddress.user_id === user.id)
+                };
+            });
+
             return {
                 ...user,
-                address: addresses,
+                address: combinedAddresses,
+                // alternateaddresses:alternateaddresses,
                 orders: orders,
                 wishlist:wishlists,
                 subscription:subscriptions

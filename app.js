@@ -11,6 +11,7 @@ const wishlistRoutes = require('./routes/wishlistRoutes');
 const orderRoutes = require('./routes/ordersRoutes');
 const historyOrderRoutes = require('./routes/ordersHistoryRoutes');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
+const alternateAddressRoutes = require('./routes/alternateAddressRoutes');
 require('dotenv').config();
 const cors = require('cors');
 
@@ -62,6 +63,7 @@ app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/ordershistory', historyOrderRoutes);
 app.use('/api/subscription', subscriptionRoutes);
+app.use('/api/alternateaddress', alternateAddressRoutes);
 // app.use('/api/users/:userId', userRoutes);
 
 module.exports = app;

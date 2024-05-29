@@ -1,7 +1,5 @@
 const { Pool } = require('pg');
 const config = require('../config/config');
-const jwt = require('jsonwebtoken');
-const bcrypt = require("bcryptjs"); 
 
 const pool = new Pool({
     host: config.db.host,
@@ -14,27 +12,22 @@ const pool = new Pool({
         rejectUnauthorized: false
     }
 });
-const createWishlist = async (request, response) => {
+const addAlternateAddress = async (request, response) => {
     try {
         const {
-            productid,
-            userid
+            user_id,
+            country,
+            states,
+            city,
+            street,
+            landmark,
+            housenumber,
+            pincode
         } = request.body;
 
-        const existingProduct = await pool.query(
-            'SELECT * FROM products_wishlist WHERE product_id = $1',
-            [productid]
-        );
-
-        if (existingProduct.rows.length > 0) {
-            return response.status(400).json({ error: 'Product already exists in the wishlist' });
-        }
-
-        
-
         const insertQuery = await pool.query(
-            'INSERT INTO products_wishlist ( product_id,user_id) VALUES ($1,$2)',
-            [ productid,userid]
+            'INSERT INTO alternate_address (user_id ,country,states,city,street,landmark,housenumber,pincode) VALUES ($1, $2,$3,$4,$5,$6,$7,$8)',
+            [user_id, country, states,city,street,landmark,housenumber,pincode]
         );
 
         response.status(200).json({ message: 'Success' });
@@ -43,12 +36,12 @@ const createWishlist = async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
-const getWishlist = async (request, response) => {
+const getAlternateAddress = async (request, response) => {
     try {
-        const cartItems = await pool.query('SELECT * FROM products_wishlist');
+        const cartItems = await pool.query('SELECT * FROM alternate_address');
 
         if (cartItems.rows.length === 0) {
-            return response.status(404).json({ error: 'No items' });
+            return response.status(404).json({ error: 'No addresses' });
         }
 
         response.status(200).json(cartItems.rows);
@@ -57,12 +50,13 @@ const getWishlist = async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
-const deleteWishlist = async (request, response) => {
+
+const deleteAlternateAddress = async (request, response) => {
     try {
-        const orderId = request.params.order_id;
+        const addressId = request.params.address_id;
         const deleteAddressQuery = await pool.query(
-            'DELETE FROM products_wishlist WHERE id = $1',
-            [orderId]
+            'DELETE FROM alternate_address WHERE id = $1',
+            [addressId]
         );
 
        
@@ -73,9 +67,9 @@ const deleteWishlist = async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
-
 module.exports = {
-    createWishlist,
-    getWishlist,
-    deleteWishlist
+    addAlternateAddress,
+    getAlternateAddress,
+    deleteAlternateAddress
+
 };
