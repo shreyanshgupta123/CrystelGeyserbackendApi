@@ -82,10 +82,7 @@ const getCartItemFeatures = async (request, response) => {
 const updateCartItems = async (request, response) => {
     try {
         const { order_id } = request.params;
-        const {
-            quantity,
-            userid
-        } = request.body;
+        const { quantity, userid } = request.body;
 
         const existingProduct = await pool.query(
             'SELECT * FROM carts WHERE order_id = $1',
@@ -98,8 +95,7 @@ const updateCartItems = async (request, response) => {
 
         const updateQuery = `
             UPDATE carts
-            SET quantity = $1,
-            SET user_id = $2   
+            SET quantity = $1, user_id = $2
             WHERE order_id = $3
         `;
 
@@ -119,6 +115,7 @@ const updateCartItems = async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
 const deleteCartItems = async (request, response) => {
     try {
         const { order_id } = request.params;
