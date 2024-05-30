@@ -62,7 +62,8 @@ const createSubscription = async (request, response) => {
         const {
             user_id,
             subscription_price,
-            subscription_type
+            subscription_type,
+            subscription_category
         } = request.body;
 
         let nextMonthDate = new Date(); 
@@ -85,8 +86,8 @@ const createSubscription = async (request, response) => {
         const validThroughInterval = `${validThroughDays} days`;
 
         const insertQuery = `
-            INSERT INTO subscription_details (user_id, subscription_price, purchased_date, expired_date, subscription_type)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO details_of_subscription (user_id, subscription_price, purchased_date, expired_date, subscription_type,subscription_category)
+            VALUES ($1, $2, $3, $4, $5,$6)
         `;
 
         await pool.query(insertQuery, [
@@ -94,7 +95,8 @@ const createSubscription = async (request, response) => {
             subscription_price,
             purchasedDate.toISOString().split('T')[0],
             expiredDate.toISOString().split('T')[0],
-            subscription_type
+            subscription_type,
+            subscription_category
         ]);
         const token = jwt.sign({ userId: user_id }, 'your_secret_key', { expiresIn: `${validThroughDays}d` });
 
