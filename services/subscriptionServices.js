@@ -109,7 +109,7 @@ const createSubscription = async (request, response) => {
 
 const getSubscription = async (request, response) => {
     try {
-        const subscriptionItems = await pool.query('SELECT * FROM subscription_details');
+        const subscriptionItems = await pool.query('SELECT * FROM details_of_subscription');
 
         if (subscriptionItems.rows.length === 0) {
             return response.status(404).json({ error: 'No subscriptions' });
@@ -125,7 +125,7 @@ const deleteSubscription = async (request, response) => {
     try {
         const subscriptionId = request.params.subscription_id;
         const deleteAddressQuery = await pool.query(
-            'DELETE FROM subscription_details WHERE id = $1',
+            'DELETE FROM details_of_subscription WHERE id = $1',
             [subscriptionId]
         );
 
