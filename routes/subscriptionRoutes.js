@@ -7,6 +7,7 @@ router.post('/', userController.createSubscription);
 // router.put('/:userId', userController.updateUserDetails);
 router.delete('/:subscription_id', userController.deleteSubscription);
 router.get('/', userController.getSubscription);
+router.get('/:subscription_id', userController.getSubscriptionById);
 // router.post('/login', userController.getUserDetailsByName);
 
 

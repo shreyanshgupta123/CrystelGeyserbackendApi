@@ -125,7 +125,7 @@ const deleteSubscription = async (request, response) => {
     try {
         const subscriptionId = request.params.subscription_id;
         const deleteAddressQuery = await pool.query(
-            'DELETE FROM details_of_subscription WHERE id = $1',
+            'DELETE FROM subscription_details WHERE id = $1',
             [subscriptionId]
         );
 
@@ -137,8 +137,28 @@ const deleteSubscription = async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
+const getSubscriptionById = async (request, response) => {
+    try {
+        const subscriptionId = request.params.subscription_id;
+
+        const existingOrder = await pool.query(
+            'SELECT * FROM subscription_details WHERE id = $1',
+            [subscriptionId]
+        );
+
+        if (existingOrder.rows.length === 0) {
+            return response.status(404).json({ error: 'Order not found' });
+        }
+
+        response.status(200).json(existingOrder.rows[0]);
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+};
 module.exports = {
     createSubscription,
     getSubscription,
-    deleteSubscription
+    deleteSubscription,
+    getSubscriptionById
 };
