@@ -12,6 +12,7 @@ const orderRoutes = require('./routes/ordersRoutes');
 const historyOrderRoutes = require('./routes/ordersHistoryRoutes');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const alternateAddressRoutes = require('./routes/alternateAddressRoutes');
+const pausedSubcriptionRoutes = require('./routes/pausedSubscriptionRoutes');
 require('dotenv').config();
 const cors = require('cors');
 
@@ -64,6 +65,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/ordershistory', historyOrderRoutes);
 app.use('/api/subscription', subscriptionRoutes);
 app.use('/api/alternateaddress', alternateAddressRoutes);
+app.use('/api/pausedsubscription', pausedSubcriptionRoutes);
 // app.use('/api/users/:userId', userRoutes);
 
 module.exports = app;

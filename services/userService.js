@@ -2,6 +2,7 @@ const { Pool } = require('pg');
 const config = require('../config/config');
 const jwt = require('jsonwebtoken');
 const bcrypt = require("bcryptjs"); 
+const crypto = require('crypto')
 
 const pool = new Pool({
     host: config.db.host,
@@ -112,8 +113,13 @@ const createUserDetails = async (request, response) => {
         if (existingPhone.rows.length > 0) {
             return response.status(400).json({ error: 'Phone already exists' });
         }
+        const hashPassword = password => {
+            return crypto.createHash('sha256').update(password).digest('hex')
+        }
+        const hashedPassword = hashPassword(password)
+        console.log(hashedPassword)
 
-        const hashedPassword = bcrypt.hashSync(password, 8);
+        // const hashedPassword = bcrypt.hashSync(password, 8);
         const usersQuery = await pool.query(
             `INSERT INTO user_details 
             (first_name, middle_name, last_name, age, gender, email, phone, phone2, username, password, birth_date, image, isLoggedIn) 
@@ -164,7 +170,7 @@ const updateUserDetails = async (request, response) => {
             houseNumber,
             pinCode
         } = request.body;
-        const hashedPassword = bcrypt.hashSync(password, 8);
+        const hashedPassword = bcrypt.hashSync(password, 10);
         const updateUserQuery = await pool.query(
             'UPDATE user_details SET first_name = $1, middle_name = $2, last_name = $3, age = $4, gender = $5, email = $6, phone = $7, phone2 = $8, username = $9, password = $10, birth_date = $11, image = $12, isLoggedIn = $13 WHERE id = $14',
             [first_name, middle_name, last_name, age, gender, email, phone, phone2, username, hashedPassword, birth_date, image, isLoggedIn, userId]
@@ -237,28 +243,45 @@ const getUserDetailsById = async (request, response) => {
 };
 const getUserDetailsByName = async (request, response) => {
     try {
-        const { username, password } = request.body; 
-
+        const userName = request.body.username; 
+        const Password=request.body.password;
+        console.log('Received username:', userName);  
+        console.log('Received password:', Password);
         
-        let userResult = await pool.query('SELECT * FROM user_details WHERE username = $1', [username]);
+        let userResult = await pool.query('SELECT * FROM user_details WHERE username = $1', [userName]);
 
        
         if (userResult.rows.length === 0) {
-            userResult = await pool.query('SELECT * FROM user_details WHERE email = $1', [username]);
+            userResult = await pool.query('SELECT * FROM user_details WHERE email = $1', [userName]);
         }
 
-        
+       
         if (userResult.rows.length === 0) {
             return response.status(400).json({ error: 'User not found' });
         }
 
         const user = userResult.rows[0];
         const hashedPassword = user.password;
+        console.log('Hashed password from DB:', hashedPassword);
+        const hashPassword = password => {
+            return crypto.createHash('sha256').update(password).digest('hex')
+        }
+        
+        const compareHashPassword = (password, hashedPassword) => {
+            if (hashPassword(password) === hashedPassword) {
+                return true
+            }
+            return false
+        }
+        
+        const isMatch = compareHashPassword(Password, hashedPassword)
+        console.log(isMatch)
 
-        const isMatch = await bcrypt.compare(password, hashedPassword);
+        // const isMatch = await bcrypt.compare(Password, hashedPassword);
+        // console.log(isMatch)
 
         if (isMatch) {
-            const token = jwt.sign({ userId: user.id }, 'your_secret_key', { expiresIn: '7d' });
+            const token = jwt.sign({ userId: user.id }, 'your_secret_key', { expiresIn: '11d' });
             return response.status(200).json({ message: 'Success', token ,userId: user.id});
         } else {
             return response.status(400).json({ error: 'Invalid credentials' });
