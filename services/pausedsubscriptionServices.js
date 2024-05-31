@@ -25,7 +25,7 @@ const createPausedSubscription = async (request, response) => {
 
         // Insert into paused_subscription
         const insertQuery = `
-            INSERT INTO paused_subscription (from_date, expired_date, user_id, subscription_id)
+            INSERT INTO paused_subscriptions (from_date, expired_date, user_id, subscription_id)
             VALUES ($1, $2, $3, $4)
         `;
 
@@ -39,7 +39,7 @@ const createPausedSubscription = async (request, response) => {
         // Retrieve the total paused days for the given subscription_id
         const selectQuery = `
             SELECT  paused_days
-            FROM paused_subscription
+            FROM paused_subscriptions
             WHERE subscription_id = $1
         `;
 
@@ -48,7 +48,7 @@ const createPausedSubscription = async (request, response) => {
 
         // Update expired_date in details_of_subscription
         const updateQuery = `
-            UPDATE details_of_subscription
+            UPDATE subscription_details
             SET new_expired_date = new_expired_date + INTERVAL '${pausedDays} days'
 
             WHERE id = $1
@@ -62,8 +62,58 @@ const createPausedSubscription = async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
+const getPausedSubscription = async (request, response) => {
+    try {
+        const subscriptionItems = await pool.query('SELECT * FROM paused_subscriptions');
 
+        if (subscriptionItems.rows.length === 0) {
+            return response.status(404).json({ error: 'No subscriptions' });
+        }
+
+        response.status(200).json(subscriptionItems.rows);
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+const getPausedSubscriptionById = async (request, response) => {
+    try {
+        const subscriptionId = request.params.subscription_id;
+
+        const existingOrder = await pool.query(
+            'SELECT * FROM paused_subscriptions WHERE id = $1',
+            [subscriptionId]
+        );
+
+        if (existingOrder.rows.length === 0) {
+            return response.status(404).json({ error: 'Order not found' });
+        }
+
+        response.status(200).json(existingOrder.rows[0]);
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+const deletePausedSubscription = async (request, response) => {
+    try {
+        const subscriptionId = request.params.subscription_id;
+        const deleteAddressQuery = await pool.query(
+            'DELETE FROM paused_subscriptions WHERE id = $1',
+            [subscriptionId]
+        );
+
+       
+
+        response.status(200).send('subscription deleted successfully');
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+};
 
 module.exports = {
-    createPausedSubscription
+    createPausedSubscription,
+    getPausedSubscription,
+    getPausedSubscriptionById
 };
