@@ -61,7 +61,7 @@ const createSubscription = async (request, response) => {
     try {
         const {
             user_id,
-            subscription_price,
+            price,
             subscription_type,
             subscription_category
         } = request.body;
@@ -86,13 +86,13 @@ const createSubscription = async (request, response) => {
         const validThroughInterval = `${validThroughDays} days`;
 
         const insertQuery = `
-            INSERT INTO details_of_subscription (user_id, subscription_price, purchased_date, expired_date, subscription_type,subscription_category)
+            INSERT INTO subscription_details (user_id, price, purchased_date, expired_date, subscription_type,subscription_category)
             VALUES ($1, $2, $3, $4, $5,$6)
         `;
 
         await pool.query(insertQuery, [
             user_id,
-            subscription_price,
+            price,
             purchasedDate.toISOString().split('T')[0],
             expiredDate.toISOString().split('T')[0],
             subscription_type,
@@ -109,7 +109,7 @@ const createSubscription = async (request, response) => {
 
 const getSubscription = async (request, response) => {
     try {
-        const subscriptionItems = await pool.query('SELECT * FROM details_of_subscription');
+        const subscriptionItems = await pool.query('SELECT * FROM subscription_details');
 
         if (subscriptionItems.rows.length === 0) {
             return response.status(404).json({ error: 'No subscriptions' });

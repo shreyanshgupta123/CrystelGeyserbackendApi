@@ -121,7 +121,7 @@ const deleteCartItems = async (request, response) => {
         const { order_id } = request.params;
 
         const existingProduct = await pool.query(
-            'SELECT * FROM carts WHERE order_id = $1',
+            'SELECT * FROM carts WHERE id = $1',
             [order_id]
         );
 
@@ -129,7 +129,7 @@ const deleteCartItems = async (request, response) => {
             return response.status(404).json({ error: 'Order not found in the cart' });
         }
 
-        const deleteQuery = 'DELETE FROM carts WHERE order_id = $1';
+        const deleteQuery = 'DELETE FROM carts WHERE id = $1';
 
         await pool.query(deleteQuery, [order_id]);
 
