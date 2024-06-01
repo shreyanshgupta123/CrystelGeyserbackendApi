@@ -67,9 +67,35 @@ const deleteAlternateAddress = async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
+const updateUserAddressDetails = async (request, response) => {
+    try {
+        const addressId = request.params.address_id;
+        const {
+            country,
+            states,
+            city,
+            street,
+            landmark,
+            housenumber,
+            pincode
+        } = request.body;
+        
+        const updateAddressQuery = await pool.query(
+            'UPDATE alternate_address SET country = $1, states = $2, city = $3, street = $4, landmark = $5, housenumber = $6, pincode = $7 WHERE id = $8',
+            [country, states, city, street, landmark, housenumber, pincode,addressId]
+        );
+
+        response.status(200).send('User address updated successfully');
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
 module.exports = {
     addAlternateAddress,
     getAlternateAddress,
-    deleteAlternateAddress
+    deleteAlternateAddress,
+    updateUserAddressDetails
 
 };

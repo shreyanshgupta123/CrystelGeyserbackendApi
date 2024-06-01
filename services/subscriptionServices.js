@@ -63,11 +63,19 @@ const createSubscription = async (request, response) => {
             user_id,
             price,
             subscription_type,
-            subscription_category
+            subscription_category,
+            purchasedDate
         } = request.body;
 
-        let nextMonthDate = new Date(); 
+      
+        const parsedPurchasedDate = new Date(purchasedDate);
+        if (isNaN(parsedPurchasedDate)) {
+            return response.status(400).json({ error: 'Invalid purchasedDate format' });
+        }
 
+        let nextMonthDate = new Date(parsedPurchasedDate); 
+
+       
         if (subscription_type === "9909ce77-02fe-49a5-840f-dad31e903a56") {
             nextMonthDate.setMonth(nextMonthDate.getMonth() + 1);
         } else if (subscription_type === "7264f7c3-73b2-41c1-b0bc-83c28e19e97f") {
@@ -76,32 +84,31 @@ const createSubscription = async (request, response) => {
             nextMonthDate.setMonth(nextMonthDate.getMonth() + 9);
         } else if (subscription_type === "df8acba7-11bb-494d-b238-815c63ed4d33") {
             nextMonthDate.setMonth(nextMonthDate.getMonth() + 12);
+        } else {
+            return response.status(400).json({ error: 'Invalid subscription_type' });
         }
 
-        const currentDate = new Date();
-        const purchasedDate = currentDate; 
-        const expiredDate = nextMonthDate; 
-
-        const validThroughDays = Math.floor((expiredDate - purchasedDate) / (1000 * 60 * 60 * 24));
-        const validThroughInterval = `${validThroughDays} days`;
+        const expiredDate = nextMonthDate;
+        const validThroughDays = Math.floor((expiredDate - parsedPurchasedDate) / (1000 * 60 * 60 * 24));
 
         const insertQuery = `
-            INSERT INTO subscription_details (user_id, price, purchased_date, expired_date, subscription_type,subscription_category,new_expired_date)
-            VALUES ($1, $2, $3, $4, $5,$6,$7)
+            INSERT INTO subscription_details (user_id, price, purchased_date, expired_date, subscription_type, subscription_category, new_expired_date)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
         `;
 
         await pool.query(insertQuery, [
             user_id,
             price,
-            purchasedDate.toISOString().split('T')[0],
+            parsedPurchasedDate.toISOString().split('T')[0],
             expiredDate.toISOString().split('T')[0],
             subscription_type,
             subscription_category,
             expiredDate.toISOString().split('T')[0]
         ]);
+
         const token = jwt.sign({ userId: user_id }, 'your_secret_key', { expiresIn: `${validThroughDays}d` });
 
-        response.status(200).json({ message: 'Subscription created successfully',token:token });
+        response.status(200).json({ message: 'Subscription created successfully', token: token });
     } catch (error) {
         console.error('Error executing query', error);
         response.status(500).json({ error: 'Internal Server Error' });
