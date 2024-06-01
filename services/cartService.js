@@ -85,7 +85,7 @@ const updateCartItems = async (request, response) => {
         const { quantity, userid } = request.body;
 
         const existingProduct = await pool.query(
-            'SELECT * FROM carts WHERE order_id = $1',
+            'SELECT * FROM carts WHERE id = $1',
             [order_id]
         );
 
@@ -96,7 +96,7 @@ const updateCartItems = async (request, response) => {
         const updateQuery = `
             UPDATE carts
             SET quantity = $1, user_id = $2
-            WHERE order_id = $3
+            WHERE id = $3
         `;
 
         const values = [

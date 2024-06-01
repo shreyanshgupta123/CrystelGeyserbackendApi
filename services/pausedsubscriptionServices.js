@@ -115,5 +115,6 @@ const deletePausedSubscription = async (request, response) => {
 module.exports = {
     createPausedSubscription,
     getPausedSubscription,
-    getPausedSubscriptionById
+    getPausedSubscriptionById,
+    deletePausedSubscription
 };
