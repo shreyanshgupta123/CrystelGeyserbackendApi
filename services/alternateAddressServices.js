@@ -24,12 +24,13 @@ const addAlternateAddress = async (request, response) => {
             housenumber,
             pincode,
             phone,
-            phone2
+            phone2,
+            name
         } = request.body;
 
         const insertQuery = await pool.query(
-            'INSERT INTO alternate_address (user_id ,country,states,city,street,landmark,housenumber,pincode,phone,phone2) VALUES ($1, $2,$3,$4,$5,$6,$7,$8,$9,$10)',
-            [user_id, country, states,city,street,landmark,housenumber,pincode,phone,phone2,]
+            'INSERT INTO alternate_address (user_id ,country,states,city,street,landmark,housenumber,pincode,phone,phone2,name) VALUES ($1, $2,$3,$4,$5,$6,$7,$8,$9,$10,$11)',
+            [user_id, country, states,city,street,landmark,housenumber,pincode,phone,phone2,name]
         );
 
         response.status(200).json({ message: 'Success' });
@@ -81,12 +82,13 @@ const updateUserAddressDetails = async (request, response) => {
             housenumber,
             pincode,
             phone,
-            phone2
+            phone2,
+            name
         } = request.body;
         
         const updateAddressQuery = await pool.query(
-            'UPDATE alternate_address SET country = $1, states = $2, city = $3, street = $4, landmark = $5, housenumber = $6, pincode = $7 ,phone  =$8 ,phone2 =$9 WHERE id = $10',
-            [country, states, city, street, landmark, housenumber, pincode,phone,phone2,addressId]
+            'UPDATE alternate_address SET country = $1, states = $2, city = $3, street = $4, landmark = $5, housenumber = $6, pincode = $7 ,phone  =$8 ,phone2 =$9,name=$10 WHERE id = $11',
+            [country, states, city, street, landmark, housenumber, pincode,phone,phone2,name,addressId]
         );
 
         response.status(200).send('User address updated successfully');
