@@ -91,11 +91,31 @@ const updateUserAddressDetails = async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
+const getAlternateAddressById = async (request, response) => {
+    try {
+        const orderId = request.params.address_id;
+
+        const existingOrder = await pool.query(
+            'SELECT * FROM alternate_address WHERE id = $1',
+            [orderId]
+        );
+
+        if (existingOrder.rows.length === 0) {
+            return response.status(404).json({ error: 'address not found' });
+        }
+
+        response.status(200).json(existingOrder.rows[0]);
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+};
 
 module.exports = {
     addAlternateAddress,
     getAlternateAddress,
     deleteAlternateAddress,
-    updateUserAddressDetails
+    updateUserAddressDetails,
+    getAlternateAddressById
 
 };
