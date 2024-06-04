@@ -259,7 +259,40 @@ const getAllProductsInAscendingOrderBySize = async (request, response) => {
         console.error('Error executing query', error);
         response.status(500).json({ error: 'Internal Server Error' });
     }
-};   
+}; 
+const getAllProductsBySearch = async (request, response) => {
+    const search = request.params.search;
+
+    try {
+        let productsQueryText = 'SELECT * FROM products';
+        let queryParams = [];
+
+        if (search) {
+            productsQueryText += ' WHERE productname LIKE $1';
+            queryParams.push(`%${search}%`);
+        }
+
+        productsQueryText += ' ORDER BY price DESC';
+
+        const productsQuery = await pool.query(productsQueryText, queryParams);
+        const reviewsQuery = await pool.query('SELECT * FROM product_reviews');
+
+        const products = productsQuery.rows.map(product => {
+            const reviews = reviewsQuery.rows.filter(review => review.product_id === product.id);
+            return {
+                ...product,
+                reviews: reviews
+            };
+        });
+
+        response.status(200).json(products);
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+
 
 module.exports = {
     getAllProducts,
@@ -272,6 +305,7 @@ module.exports = {
     getAllProductsInAscendingOrderByRating,
     getAllProductsInDescendingOrderByRating,
     getAllProductsInDescendingOrderBySize,
-    getAllProductsInAscendingOrderBySize
+    getAllProductsInAscendingOrderBySize,
+    getAllProductsBySearch
 
 };

@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { getAllProducts, getProductsById, deleteProductsById,getProductsByName,addProduct,getAllProductsInAscendingOrder,getAllProductsInDescendingOrder,getAllProductsInAscendingOrderByRating,getAllProductsInDescendingOrderByRating,getAllProductsInDescendingOrderBySize ,getAllProductsInAscendingOrderBySize} = require('../services/productService');
+const { getAllProducts, getProductsById, deleteProductsById,getProductsByName,addProduct,getAllProductsInAscendingOrder,getAllProductsInDescendingOrder,getAllProductsInAscendingOrderByRating,getAllProductsInDescendingOrderByRating,getAllProductsInDescendingOrderBySize ,getAllProductsInAscendingOrderBySize,getAllProductsBySearch} = require('../services/productService');
 
 router.get('/', getAllProducts);
 router.post('/', addProduct);
+router.get('/:search', getAllProductsBySearch);
 router.get('/priceasc', getAllProductsInAscendingOrder);
 router.get('/pricedesc', getAllProductsInDescendingOrder);
 router.get('/sizeasc', getAllProductsInAscendingOrderBySize);
