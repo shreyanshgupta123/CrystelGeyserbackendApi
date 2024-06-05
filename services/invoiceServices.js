@@ -38,7 +38,42 @@ const addInvoice= async (request, response) => {
     }
 
 };
+const getInvoice = async (request, response) => {
+    try {
+        const cartItems = await pool.query('SELECT * FROM invoice_table');
+
+        if (cartItems.rows.length === 0) {
+            return response.status(404).json({ error: 'No orders' });
+        }
+
+        response.status(200).json(cartItems.rows);
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+
+};
+const getInvoiceById = async (request, response) => {
+    try {
+        const invoiceId = request.params.invoice_id;
+
+        const existingOrder = await pool.query(
+            'SELECT * FROM invoice_table WHERE id = $1',
+            [invoiceId]
+        );
+
+        if (existingOrder.rows.length === 0) {
+            return response.status(404).json({ error: 'Order not found' });
+        }
+
+        response.status(200).json(existingOrder.rows[0]);
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+};
 module.exports = {
     addInvoice,
-    
+    getInvoice,
+    getInvoiceById
 };
