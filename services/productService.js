@@ -14,6 +14,7 @@ const pool = new Pool({
 });
 
 const getAllProducts = async (request, response) => {
+    console.log("hello")
     try {
         const productsQuery = await pool.query('SELECT * FROM products');
         const reviewsQuery = await pool.query('SELECT * FROM product_reviews');
@@ -34,6 +35,7 @@ const getAllProducts = async (request, response) => {
 };
 
 const getProductsById = async (request, response) => {
+    console.log("hello")
     try {
         const productId = request.params.productid;
         const productsQuery = await pool.query('SELECT * FROM products');
@@ -47,7 +49,7 @@ const getProductsById = async (request, response) => {
             };
         });
         const result = products.find(product => product.id === productId);
-
+        console.log(result)
         response.status(200).json(result);
     } catch (error) {
         console.error('Error executing query', error);
