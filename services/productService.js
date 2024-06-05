@@ -263,15 +263,15 @@ const getAllProductsInAscendingOrderBySize = async (request, response) => {
     }
 }; 
 const getAllProductsBySearch = async (request, response) => {
-    const search = request.params.search;
+    const Search = request.params.search;
 
     try {
         let productsQueryText = 'SELECT * FROM products';
         let queryParams = [];
 
-        if (search) {
+        if (Search) {
             productsQueryText += ' WHERE productname LIKE $1';
-            queryParams.push(`%${search}%`);
+            queryParams.push(`%${Search}%`);
         }
 
         productsQueryText += ' ORDER BY price DESC';
@@ -286,6 +286,7 @@ const getAllProductsBySearch = async (request, response) => {
                 reviews: reviews
             };
         });
+        console.log(products)
 
         response.status(200).json(products);
     } catch (error) {

@@ -4,8 +4,9 @@ const { getAllProducts, getProductsById, deleteProductsById,getProductsByName,ad
 
 router.get('/', getAllProducts);
 router.get('/:productid', getProductsById);
+router.get('/search/:search', getAllProductsBySearch);
 router.post('/', addProduct);
-router.get('/:search', getAllProductsBySearch);
+
 router.get('/priceasc', getAllProductsInAscendingOrder);
 router.get('/pricedesc', getAllProductsInDescendingOrder);
 router.get('/sizeasc', getAllProductsInAscendingOrderBySize);
