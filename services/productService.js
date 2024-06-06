@@ -270,7 +270,7 @@ const getAllProductsBySearch = async (request, response) => {
         let queryParams = [];
 
         if (Search) {
-            productsQueryText += ' WHERE productname LIKE $1';
+            productsQueryText += ' WHERE productname ILIKE $1';
             queryParams.push(`%${Search}%`);
         }
 
