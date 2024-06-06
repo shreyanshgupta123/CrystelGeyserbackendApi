@@ -16,6 +16,7 @@ const pausedSubcriptionRoutes = require('./routes/pausedSubscriptionRoutes');
 const forgetpasswordRoutes = require('./routes/forgetPasswordRoutes');
 const discountRoutes = require('./routes/discountroutes');
 const invoiceRoutes = require('./routes/invoiceRoutes');
+const feedbackRoutes = require('./routes/feedbackRoutes');
 require('dotenv').config();
 const cors = require('cors');
 
@@ -72,6 +73,7 @@ app.use('/api/pausedsubscription', pausedSubcriptionRoutes);
 app.use('/api/forgetpassword', forgetpasswordRoutes);
 app.use('/api/discount', discountRoutes);
 app.use('/api/invoice', invoiceRoutes);
+app.use('/api/feedback', feedbackRoutes);
 // app.use('/api/users/:userId', userRoutes);
 
 module.exports = app;
