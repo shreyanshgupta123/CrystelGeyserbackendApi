@@ -20,20 +20,22 @@ const createPausedSubscription = async (request, response) => {
             from_date,
             expired_date,
             user_id,
-            subscription_id
+            subscription_id,
+            is_paused
         } = request.body;
 
         // Insert into paused_subscription
         const insertQuery = `
-            INSERT INTO paused_subscriptions (from_date, expired_date, user_id, subscription_id)
-            VALUES ($1, $2, $3, $4)
+            INSERT INTO paused_subscriptions (from_date, expired_date, user_id, subscription_id,is_paused)
+            VALUES ($1, $2, $3, $4,$5)
         `;
 
         await pool.query(insertQuery, [
             from_date,
             expired_date,
             user_id,
-            subscription_id
+            subscription_id,
+            is_paused
         ]);
 
         // Retrieve the total paused days for the given subscription_id

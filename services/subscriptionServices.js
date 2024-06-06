@@ -171,7 +171,8 @@ const updateSubscription = async (request, response) => {
             price,
             subscription_type,
             subscription_category,
-            purchasedDate
+            purchasedDate,
+        
         } = request.body;
 
         // Validate subscription_id
