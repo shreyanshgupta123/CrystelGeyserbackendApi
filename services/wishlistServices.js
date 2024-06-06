@@ -22,8 +22,8 @@ const createWishlist = async (request, response) => {
         } = request.body;
 
         const existingProduct = await pool.query(
-            'SELECT * FROM products_wishlist WHERE product_id = $1',
-            [productid]
+            'SELECT * FROM products_wishlist WHERE product_id = $1 AND user_id=$2',
+            [productid,userid]
         );
 
         if (existingProduct.rows.length > 0) {

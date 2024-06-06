@@ -24,7 +24,7 @@ const createPausedSubscription = async (request, response) => {
             is_paused
         } = request.body;
 
-        // Insert into paused_subscription
+        
         const insertQuery = `
             INSERT INTO paused_subscriptions (from_date, expired_date, user_id, subscription_id,is_paused)
             VALUES ($1, $2, $3, $4,$5)
@@ -38,7 +38,7 @@ const createPausedSubscription = async (request, response) => {
             is_paused
         ]);
 
-        // Retrieve the total paused days for the given subscription_id
+       
         const selectQuery = `
             SELECT  paused_days
             FROM paused_subscriptions
@@ -48,7 +48,7 @@ const createPausedSubscription = async (request, response) => {
         const selectResult = await pool.query(selectQuery, [subscription_id]);
         const pausedDays = selectResult.rows.length > 0 ? selectResult.rows[0].paused_days : 0;
 
-        // Update expired_date in details_of_subscription
+        
         const updateQuery = `
             UPDATE subscription_details
             SET new_expired_date = new_expired_date + INTERVAL '${pausedDays} days'
