@@ -24,7 +24,7 @@ const getUserDetails = async (request, response) => {
         const addressQuery = await pool.query('SELECT * FROM user_address_');
         const ordersQuery = await pool.query('SELECT * FROM my_order');
         const wishlistQuery = await pool.query('SELECT * FROM products_wishlist');
-        const subscriptionQuery = await pool.query('SELECT * FROM subscription_details');
+        const subscriptionQuery = await pool.query('SELECT * FROM subscription_table');
         const alternateAddressQuery = await pool.query('SELECT * FROM alternate_address');
         const cartQuery = await pool.query('SELECT * FROM carts');
         const users = usersQuery.rows.map(user => {
@@ -214,7 +214,7 @@ const getUserDetailsById = async (request, response) => {
         const addressQuery = await pool.query('SELECT * FROM user_address_');
         const ordersQuery = await pool.query('SELECT * FROM my_order');
         const wishlistQuery = await pool.query('SELECT * FROM products_wishlist');
-        const subscriptionQuery = await pool.query('SELECT * FROM subscription_details');
+        const subscriptionQuery = await pool.query('SELECT * FROM subscription_table');
         const cartQuery = await pool.query('SELECT * FROM carts');
         const alternateAddressQuery = await pool.query('SELECT * FROM alternate_address');
 

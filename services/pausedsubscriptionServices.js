@@ -50,7 +50,7 @@ const createPausedSubscription = async (request, response) => {
 
         
         const updateQuery = `
-            UPDATE subscription_details
+            UPDATE active_subscription
             SET new_expired_date = new_expired_date + INTERVAL '${pausedDays} days'
 
             WHERE id = $1

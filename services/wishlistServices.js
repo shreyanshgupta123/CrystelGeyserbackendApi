@@ -43,15 +43,43 @@ const createWishlist = async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
+// const getWishlist = async (request, response) => {
+    
+//     try {
+//         const cartItems = await pool.query('SELECT * FROM products_wishlist');
+
+//         if (cartItems.rows.length === 0) {
+//             return response.status(404).json({ error: 'No items' });
+//         }
+
+//         response.status(200).json(cartItems.rows);
+//     } catch (error) {
+//         console.error('Error executing query', error);
+//         response.status(500).json({ error: 'Internal Server Error' });
+//     }
+// };
 const getWishlist = async (request, response) => {
     try {
-        const cartItems = await pool.query('SELECT * FROM products_wishlist');
-
-        if (cartItems.rows.length === 0) {
-            return response.status(404).json({ error: 'No items' });
+        const token = request.headers['authorization'];
+        if (!token) {
+            return response.status(401).json({ error: 'Access denied, no token provided' });
         }
 
-        response.status(200).json(cartItems.rows);
+        // Verify the token
+        try {
+            const decoded = jwt.verify(token, "KG3BHEdzNMrVSA3vNVo4bxUvoXyYQ9Rt");
+
+            // Proceed with querying the database
+            const cartItems = await pool.query('SELECT * FROM products_wishlist');
+
+            if (cartItems.rows.length === 0) {
+                return response.status(404).json({ error: 'No items' });
+            }
+
+            response.status(200).json(cartItems.rows);
+        } catch (error) {
+            return response.status(400).json({ error: 'Invalid token' });
+        }
     } catch (error) {
         console.error('Error executing query', error);
         response.status(500).json({ error: 'Internal Server Error' });
