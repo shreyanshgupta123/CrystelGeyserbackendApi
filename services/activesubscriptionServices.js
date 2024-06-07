@@ -23,12 +23,11 @@ const createActiveSubscription = async (request, response) => {
 
         const parsedPurchasedDate = new Date(purchased_date);
         if (isNaN(parsedPurchasedDate)) {
-            return response.status(400).json({ error: 'Invalid purchasedDate format' });
+            return response.status(400).json({ error: 'Invalid purchased_date format' });
         }
 
-        let nextMonthDate = new Date(parsedPurchasedDate); 
+        let nextMonthDate = new Date(parsedPurchasedDate);
 
-       
         if (suscription_type === "9909ce77-02fe-49a5-840f-dad31e903a56") {
             nextMonthDate.setMonth(nextMonthDate.getMonth() + 1);
         } else if (suscription_type === "7264f7c3-73b2-41c1-b0bc-83c28e19e97f") {
@@ -42,22 +41,21 @@ const createActiveSubscription = async (request, response) => {
         }
 
         const expiredDate = nextMonthDate;
-        const validThroughDays = Math.floor((expiredDate - parsedPurchasedDate) / (1000 * 60 * 60 * 24));
-        
 
         const insertQuery = await pool.query(
-            'INSERT INTO active_subscription ( price,user_id,purchased_date,suscription_type,new_expired_date, expired_date) VALUES ($1,$2,$3,$4,$5,$6)',
-            [ price,user_id,purchased_date,suscription_type,expiredDate, expiredDate]
+            'INSERT INTO active_subscription (price, user_id, purchased_date, suscription_type, new_expired_date, expired_date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+            [price, user_id, purchased_date, suscription_type, expiredDate, expiredDate]
         );
 
-        const newSubscriptionId = insertQuery.rows[0].id;
+        const insertedId = insertQuery.rows[0].id;
 
-        response.status(200).json({ message: 'Success', id: newSubscriptionId });
+        response.status(200).json({ message: 'Success', id: insertedId });
     } catch (error) {
         console.error('Error executing query', error);
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
 const getActiveSubscription = async (request, response) => {
     try {
         const subscriptionItems = await pool.query('SELECT * FROM active_subscription');

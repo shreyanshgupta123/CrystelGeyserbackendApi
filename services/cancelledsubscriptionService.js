@@ -47,7 +47,7 @@ const createCancelledSubscription = async (request, response) => {
         const cancelledDate = new Date();
 
         const insertQuery = await pool.query(
-            'INSERT INTO canncelled_subscription ( price,user_id,purchased_date,subscription_type,new_expired_date, expired_date,cancelled_date) VALUES ($1,$2,$3,$4,$5,$6,$7)',
+            'INSERT INTO canncelled_subscription ( price,user_id,purchased_date,subscription_type,new_expired_date, expired_date,cancelled_date) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id',
             [ price,user_id,purchased_date,suscription_type,expiredDate, expiredDate,cancelledDate]
         );
 

@@ -49,7 +49,7 @@ const addCancelledOrders = async (request, response) => {
         
 
         const insertQuery = await pool.query(
-            'INSERT INTO cancelled_orders (user_id,product_id, price, unit, expected_delivery, payment_method,cancellation_reason) VALUES ($1, $2, $3, $4, $5,$6,$7)',
+            'INSERT INTO cancelled_orders (user_id,product_id, price, unit, expected_delivery, payment_method,cancellation_reason) VALUES ($1, $2, $3, $4, $5,$6,$7) RETURNING id',
             [userid,productid, price, unit, expected_delivery, payment_method,cancellation_reason]
         );
 
