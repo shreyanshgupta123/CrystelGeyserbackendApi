@@ -51,7 +51,9 @@ const createCancelledSubscription = async (request, response) => {
             [ price,user_id,purchased_date,suscription_type,expiredDate, expiredDate,cancelledDate]
         );
 
-        response.status(200).json({ message: 'Success' });
+        const newSubscriptionId = insertQuery.rows[0].id;
+
+        response.status(200).json({ message: 'Success', id: newSubscriptionId });
     } catch (error) {
         console.error('Error executing query', error);
         response.status(500).json({ error: 'Internal Server Error' });
@@ -71,7 +73,27 @@ const getCancelledSubscription = async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
+const getCancelledSubscriptionById = async (request, response) => {
+    try {
+        const subscriptionId = request.params.subscription_id;
+
+        const existingOrder = await pool.query(
+            'SELECT * FROM canncelled_subscription WHERE id = $1',
+            [subscriptionId]
+        );
+
+        if (existingOrder.rows.length === 0) {
+            return response.status(404).json({ error: 'Order not found' });
+        }
+
+        response.status(200).json(existingOrder.rows[0]);
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+};
 module.exports = {
     createCancelledSubscription,
-getCancelledSubscription
+getCancelledSubscription,
+getCancelledSubscriptionById
 };

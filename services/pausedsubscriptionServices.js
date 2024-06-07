@@ -58,7 +58,9 @@ const createPausedSubscription = async (request, response) => {
 
         await pool.query(updateQuery, [subscription_id]);
 
-        response.status(200).json({ message: 'Subscription created successfully' });
+        const newSubscriptionId = insertQuery.rows[0].id;
+
+        response.status(200).json({ message: 'Success', id: newSubscriptionId });
     } catch (error) {
         console.error('Error executing query', error);
         response.status(500).json({ error: 'Internal Server Error' });

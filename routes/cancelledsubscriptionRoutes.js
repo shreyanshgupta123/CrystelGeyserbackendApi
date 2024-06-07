@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
    
-    const {createCancelledSubscription,getCancelledSubscription} = require('../services/cancelledsubscriptionService');
+    const {createCancelledSubscription,getCancelledSubscription,getCancelledSubscriptionById} = require('../services/cancelledsubscriptionService');
 
 
 router.post('/', createCancelledSubscription);
   router.get('/',  getCancelledSubscription);
-// router.get('/:address_id', getAlternateAddressById);
+router.get('/:subscription_id', getCancelledSubscriptionById);
 // router.delete('/:address_id', deleteAlternateAddress);
 // router.put('/:address_id', updateUserAddressDetails);
 
