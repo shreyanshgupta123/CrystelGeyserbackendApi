@@ -30,12 +30,12 @@ const createInvoice = (invoice, filePath) => {
 
 const generateHeader = (doc) => {
   doc
-    .image("logo.png", 50, 45, { width: 50 })
+    // .image("logo.png", 50, 45, { width: 50 })
     .fillColor("#444444")
     .fontSize(20)
-    .text("ACME Inc.", 110, 57)
-    .fontSize(10)
-    .text("ACME Inc.", 200, 50, { align: "right" })
+    .text("Crystelgeyser Inc.", 110, 57)
+    .fontSize(15)
+    .text("Crystelgeyser Inc.", 200, 50, { align: "right" })
     .text("123 Main Street", 200, 65, { align: "right" })
     .text("New York, NY, 10025", 200, 80, { align: "right" })
     .moveDown();
@@ -196,20 +196,25 @@ const formatDate = (date) => {
 
 const getInvoicePdf = async (request, response) => {
   try {
-    const invoice = request.body; 
-    const filePath = path.join(__dirname, 'invoices', 'invoice.pdf');
-    
-    
-    const directory = path.dirname(filePath);
-    if (!fs.existsSync(directory)) {
-      fs.mkdirSync(directory, { recursive: true });
-    }
+      const invoice = request.body;
+      const filePath = path.join(__dirname, '..', 'invoices', `invoice_${invoice.invoice_nr}.pdf`);
 
-    createInvoice(invoice, filePath);
-    response.sendFile(filePath);
+      
+      const directory = path.dirname(filePath);
+      if (!fs.existsSync(directory)) {
+          fs.mkdirSync(directory, { recursive: true });
+      }
+
+      createInvoice(invoice, filePath);
+      response.download(filePath, `invoice_${invoice.invoice_nr}.pdf`, (err) => {
+          if (err) {
+              console.error('Error sending the file:', err);
+              response.status(500).send('Error sending the file');
+          }
+      });
   } catch (error) {
-    console.error('Error generating invoice PDF', error);
-    response.status(500).json({ error: 'Internal Server Error' });
+      console.error('Error generating invoice PDF', error);
+      response.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
