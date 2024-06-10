@@ -30,7 +30,7 @@ const createPausedSubscription = async (request, response) => {
             VALUES ($1, $2, $3, $4,$5) RETURNING id
         `;
 
-        await pool.query(insertQuery, [
+        const value=await pool.query(insertQuery, [
             from_date,
             expired_date,
             user_id,
@@ -55,10 +55,9 @@ const createPausedSubscription = async (request, response) => {
 
             WHERE id = $1
         `;
-
         await pool.query(updateQuery, [subscription_id]);
-
-        const newSubscriptionId = insertQuery.rows[0].id;
+        
+        const newSubscriptionId = value.rows[0].id;
 
         response.status(200).json({ message: 'Success', id: newSubscriptionId });
     } catch (error) {

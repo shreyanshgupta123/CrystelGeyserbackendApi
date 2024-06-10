@@ -123,5 +123,4 @@ module.exports = {
     deleteAlternateAddress,
     updateUserAddressDetails,
     getAlternateAddressById
-
 };

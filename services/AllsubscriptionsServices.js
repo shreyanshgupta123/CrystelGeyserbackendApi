@@ -109,5 +109,6 @@ const updateSubscription = async (request, response) => {
 module.exports = {
     createSubscription,
     getAllSubscription,
-    updateSubscription
+    updateSubscription,
+    getAllSubscriptionById
 };
