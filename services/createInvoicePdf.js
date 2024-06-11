@@ -186,6 +186,7 @@ const formatCurrency = (cents) => {
   return "$" + (cents / 100).toFixed(2);
 };
 
+
 const formatDate = (date) => {
   const day = date.getDate();
   const month = date.getMonth() + 1;
@@ -204,6 +205,8 @@ const getInvoicePdf = async (request, response) => {
       if (!fs.existsSync(directory)) {
           fs.mkdirSync(directory, { recursive: true });
       }
+
+
 
       createInvoice(invoice, filePath);
       response.download(filePath, `invoice_${invoice.invoice_nr}.pdf`, (err) => {

@@ -21,6 +21,7 @@ const activesubscriptionRoutes = require('./routes/activesubscriptionRoutes');
 const cancelledscriptionRoutes = require('./routes/cancelledsubscriptionRoutes');
 const allSubscriptionRoutes = require('./routes/AllsubscriptionRoutes');
 const createInvoiceRoutes = require('./routes/createinvoiceRoutes');
+const subscriptionOfUsersRoutes = require('./routes/subscriptionsofusersRoutes');
 require('dotenv').config();
 const cors = require('cors');
 
@@ -82,6 +83,7 @@ app.use('/api/activesubscription', activesubscriptionRoutes);
 app.use('/api/cancelledsubscription', cancelledscriptionRoutes);
 app.use('/api/allsubscriptions', allSubscriptionRoutes);
 app.use('/api/createinvoice', createInvoiceRoutes);
+app.use('/api/subscriptionsofusers', subscriptionOfUsersRoutes);
 // app.use('/api/users/:userId', userRoutes);
 
 module.exports = app;
