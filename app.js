@@ -23,6 +23,7 @@ const allSubscriptionRoutes = require('./routes/AllsubscriptionRoutes');
 const createInvoiceRoutes = require('./routes/createinvoiceRoutes');
 const subscriptionOfUsersRoutes = require('./routes/subscriptionsofusersRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const refferalRoutes = require('./routes/refferalRoutes');
 require('dotenv').config();
 const cors = require('cors');
 
@@ -86,6 +87,7 @@ app.use('/api/allsubscriptions', allSubscriptionRoutes);
 app.use('/api/createinvoice', createInvoiceRoutes);
 app.use('/api/subscriptionsofusers', subscriptionOfUsersRoutes);
 app.use('/api/review', reviewRoutes);
+app.use('/api/refferal', refferalRoutes);
 // app.use('/api/users/:userId', userRoutes);
 
 module.exports = app;
