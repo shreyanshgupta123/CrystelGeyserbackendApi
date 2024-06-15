@@ -157,5 +157,6 @@ module.exports = {
     addReturnJarRequest,
     getReturnJarRequest,
     getReturnJarRequestById,
-    updateReturnJarRequests
+    updateReturnJarRequests,
+    deleteReturnJarRequests
 };
