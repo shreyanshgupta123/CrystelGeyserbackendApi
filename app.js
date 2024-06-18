@@ -27,6 +27,7 @@ const refferalRoutes = require('./routes/refferalRoutes');
 const returnJarRoutes = require('./routes/returnjarrequestRoutes');
 const citiesRoutes = require('./routes/citiesRoutes');
 const statesRoutes = require('./routes/statesRoutes');
+const countriesRoutes = require('./routes/countriesRoutes');
 require('dotenv').config();
 const cors = require('cors');
 
@@ -62,5 +63,6 @@ app.use('/api/refferal', refferalRoutes);
 app.use('/api/returnrequest', returnJarRoutes);
 app.use('/api/cities', citiesRoutes);
 app.use('/api/cities', statesRoutes);
+app.use('/api/countries', countriesRoutes);
 
 module.exports = app;
