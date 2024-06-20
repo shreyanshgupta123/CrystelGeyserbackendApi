@@ -28,10 +28,11 @@ const returnJarRoutes = require('./routes/returnjarrequestRoutes');
 const citiesRoutes = require('./routes/citiesRoutes');
 const statesRoutes = require('./routes/statesRoutes');
 const countriesRoutes = require('./routes/countriesRoutes');
+const newsRoutes = require('./routes/newsRoutes');
 require('dotenv').config();
 const cors = require('cors');
 
- const app = express();
+const app = express();
 app.use(cors());
 
 app.use(bodyParser.json());
@@ -64,5 +65,6 @@ app.use('/api/returnrequest', returnJarRoutes);
 app.use('/api/cities', citiesRoutes);
 app.use('/api/cities', statesRoutes);
 app.use('/api/countries', countriesRoutes);
+app.use('/api/news', newsRoutes);
 
 module.exports = app;
