@@ -21,7 +21,9 @@ const addReviews= async (request, response) => {
             rating,
             comments,
             user_id,
-            product_id
+            product_id,
+            title,
+            image_url
         } = request.body;
 
        
@@ -29,8 +31,8 @@ const addReviews= async (request, response) => {
         
 
         const insertQuery = await pool.query(
-            'INSERT INTO reviews_of_products (customer,rating,comments,user_id,product_id) VALUES ($1, $2,$3,$4,$5)',
-            [ customer,rating,comments,user_id,product_id]
+            'INSERT INTO reviews_of_products (customer,rating,comments,user_id,product_id,title,image_url) VALUES ($1, $2,$3,$4,$5,$6,$7)',
+            [ customer,rating,comments,user_id,product_id,title,image_url]
         );
 
         response.status(200).json({ message: 'Success' });

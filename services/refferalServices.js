@@ -58,7 +58,7 @@ const getRefferalById = async (request, response) => {
             [invoiceId]
         );
 
-        if (existingOrder.rows.length === 0) {
+        if (existingOrder.rows.length === 0) { 
             return response.status(404).json({ error: 'refferal not found' });
         }
 
