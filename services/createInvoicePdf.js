@@ -199,8 +199,14 @@ const formatDate = (date) => {
 const getInvoicePdf = async (request, response) => {
   try {
       const invoice = request.body;
-      invoice.invoice_nr = uuidv4();
-      console.log(invoice.invoice_nr)
+      const result = await pool.query('SELECT invoice_number FROM invoice_number_table ORDER BY invoice_number DESC LIMIT 1');
+      let lastInvoiceNr = result.rows[0]?.invoice_number || 0;
+      let newInvoiceNr = lastInvoiceNr + 1;
+
+     
+      invoice.invoice_nr = newInvoiceNr;
+      console.log(invoice.invoice_nr);
+      await pool.query('INSERT INTO invoice_number_table (invoice_number) VALUES ($1)', [newInvoiceNr]);
       const filePath = path.join(__dirname, '..', 'invoices', `invoice_1234.pdf`);
 
       
