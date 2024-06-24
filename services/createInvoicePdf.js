@@ -3,6 +3,7 @@ const path = require('path');
 const PDFDocument = require('pdfkit');
 const { Pool } = require('pg');
 const config = require('../config/config');
+const { v4: uuidv4 } = require('uuid');
 
 const pool = new Pool({
     host: config.db.host,
@@ -66,16 +67,16 @@ const generateCustomerInformation = (doc, invoice) => {
       customerInformationTop + 30
     )
     .font("Helvetica-Bold")
-    .text(invoice.shipping.name, 300, customerInformationTop)
+    .text(invoice.shipping.name, 350, customerInformationTop)
     .font("Helvetica")
-    .text(invoice.shipping.address, 300, customerInformationTop + 15)
+    .text(invoice.shipping.address, 350, customerInformationTop + 15)
     .text(
       invoice.shipping.city +
         ", " +
         invoice.shipping.state +
         ", " +
         invoice.shipping.country,
-      300,
+      350,
       customerInformationTop + 30
     )
     .moveDown();
@@ -92,7 +93,7 @@ const generateInvoiceTable = (doc, invoice) => {
     doc,
     invoiceTableTop,
     "Item",
-    "Description",
+    // "Description",
     "Unit Cost",
     "Quantity",
     "Line Total"
@@ -107,7 +108,7 @@ const generateInvoiceTable = (doc, invoice) => {
       doc,
       position,
       item.item,
-      item.description,
+      // item.description,
       formatCurrency(item.amount / item.quantity),
       item.quantity,
       formatCurrency(item.amount)
@@ -198,7 +199,9 @@ const formatDate = (date) => {
 const getInvoicePdf = async (request, response) => {
   try {
       const invoice = request.body;
-      const filePath = path.join(__dirname, '..', 'invoices', `invoice_${invoice.invoice_nr}.pdf`);
+      invoice.invoice_nr = uuidv4();
+      console.log(invoice.invoice_nr)
+      const filePath = path.join(__dirname, '..', 'invoices', `invoice_1234.pdf`);
 
       
       const directory = path.dirname(filePath);
@@ -209,7 +212,7 @@ const getInvoicePdf = async (request, response) => {
 
 
       createInvoice(invoice, filePath);
-      response.download(filePath, `invoice_${invoice.invoice_nr}.pdf`, (err) => {
+      response.download(filePath, `invoice_1234.pdf`, (err) => {
           if (err) {
               console.error('Error sending the file:', err);
               response.status(500).send('Error sending the file');
