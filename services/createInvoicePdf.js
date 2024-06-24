@@ -60,12 +60,12 @@ const generateCustomerInformation = (doc, invoice) => {
     .font("Helvetica")
     .text("Invoice Date:", 50, customerInformationTop + 15)
     .text(formatDate(new Date()), 150, customerInformationTop + 15)
-    .text("Balance Due:", 50, customerInformationTop + 30)
-    .text(
-      formatCurrency(invoice.subtotal - invoice.paid),
-      150,
-      customerInformationTop + 30
-    )
+    // .text("Balance Due:", 50, customerInformationTop + 30)
+    // .text(
+    //   formatCurrency(invoice.subtotal - invoice.paid),
+    //   150,
+    //   customerInformationTop + 30
+    // )
     .font("Helvetica-Bold")
     .text(invoice.shipping.name, 350, customerInformationTop)
     .font("Helvetica")
