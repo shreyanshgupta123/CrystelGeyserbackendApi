@@ -96,7 +96,7 @@ const generateInvoiceTable = (doc, invoice) => {
     // "Description",
     "Unit Cost",
     "Quantity",
-    "Line Total"
+    "Total Cost"
   );
   generateHr(doc, invoiceTableTop + 20);
   doc.font("Helvetica");
@@ -146,7 +146,7 @@ const generateInvoiceTable = (doc, invoice) => {
     duePosition,
     "",
     "",
-    "Balance Due",
+    "Total Amount",
     "",
     formatCurrency(invoice.subtotal - invoice.paid)
   );
@@ -168,9 +168,9 @@ const generateTableRow = (doc, y, item, description, unitCost, quantity, lineTot
   doc
     .fontSize(10)
     .text(item, 50, y)
-    .text(description, 150, y)
-    .text(unitCost, 280, y, { width: 90, align: "right" })
-    .text(quantity, 370, y, { width: 90, align: "right" })
+    .text(description, 340, y)
+    .text(unitCost, 390, y, { width: 90, align: "right" })
+    .text(quantity, 460, y, { width: 90, align: "right" })
     .text(lineTotal, 0, y, { align: "right" });
 };
 
