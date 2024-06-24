@@ -129,21 +129,21 @@ const generateInvoiceTable = (doc, invoice) => {
   );
 
   const paidToDatePosition = subtotalPosition + 20;
+  // generateTableRow(
+  //   doc,
+  //   paidToDatePosition,
+  //   "",
+  //   "",
+  //   "Paid To Date",
+  //   "",
+  //   formatCurrency(invoice.paid)
+  // );
+
+  // const duePosition = paidToDatePosition + 25;
+  // doc.font("Helvetica-Bold");
   generateTableRow(
     doc,
     paidToDatePosition,
-    "",
-    "",
-    "Paid To Date",
-    "",
-    formatCurrency(invoice.paid)
-  );
-
-  const duePosition = paidToDatePosition + 25;
-  doc.font("Helvetica-Bold");
-  generateTableRow(
-    doc,
-    duePosition,
     "",
     "",
     "Total Amount",
