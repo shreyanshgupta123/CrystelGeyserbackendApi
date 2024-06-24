@@ -75,7 +75,7 @@ const generateCustomerInformation = (doc, invoice) => {
         ", " +
         invoice.shipping.state +
         ", " +
-        invoice.shipping.country,
+        invoice.shipping.country+", "+invoice.shipping.postal_code,
       350,
       customerInformationTop + 30
     )
