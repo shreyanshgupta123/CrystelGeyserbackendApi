@@ -74,7 +74,6 @@ const deleteCities = async (request, response) => {
         );
 
        
-
         response.status(200).send('review deleted successfully');
     } catch (error) {
         console.error('Error executing query', error);

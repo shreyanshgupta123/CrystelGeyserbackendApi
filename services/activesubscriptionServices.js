@@ -89,9 +89,26 @@ const getActiveSubscriptionById = async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
+const deleteActiveSubscription = async (request, response) => {
+    try {
+        const orderId = request.params.order_id;
+        const deleteAddressQuery = await pool.query(
+            'DELETE FROM active_subscription WHERE id = $1',
+            [orderId]
+        );
+
+       
+
+        response.status(200).send('subscription deleted successfully');
+    } catch (error) {
+        console.error('Error executing query', error);
+        response.status(500).json({ error: 'Internal Server Error' });
+    }
+};
 module.exports = {
     createActiveSubscription,
     getActiveSubscription,
-    getActiveSubscriptionById
+    getActiveSubscriptionById,
+    deleteActiveSubscription
 
 };
