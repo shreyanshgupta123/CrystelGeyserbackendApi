@@ -47,7 +47,6 @@ const createPausedSubscription = async (request, response) => {
 
         const selectResult = await pool.query(selectQuery, [subscription_id]);
         const pausedDays = selectResult.rows.length > 0 ? selectResult.rows[0].paused_days : 0;
-
         
         const updateQuery = `
             UPDATE active_subscription

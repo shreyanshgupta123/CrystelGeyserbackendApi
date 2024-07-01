@@ -53,7 +53,7 @@ const getAllSubscriptionById = async (request, response) => {
         const subscriptionId = request.params.subscription_id;
 
         const existingOrder = await pool.query(
-            'SELECT * FROM subsriction_table WHERE id = $1',
+            'SELECT * FROM subscription_table WHERE id = $1',
             [subscriptionId]
         );
         if (existingOrder.rows.length === 0) {
