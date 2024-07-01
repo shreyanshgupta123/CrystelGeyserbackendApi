@@ -111,7 +111,7 @@ const getActiveSubscriptionById = async (request, response) => {
 const deleteActiveSubscription = async (request, response) => {
     try {
         const orderId = request.params.order_id;
-        await pool.query('DELETE FROM subscription_table WHERE active_subscription_id = $1', [orderId]);
+        // await pool.query('DELETE FROM subscription_table WHERE active_subscription_id = $1', [orderId]);
         const deleteAddressQuery = await pool.query(
             'DELETE FROM active_subscription WHERE id = $1',
             [orderId]
