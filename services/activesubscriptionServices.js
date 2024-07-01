@@ -111,20 +111,32 @@ const getActiveSubscriptionById = async (request, response) => {
 const deleteActiveSubscription = async (request, response) => {
     try {
         const orderId = request.params.order_id;
-        // await pool.query('DELETE FROM subscription_table WHERE active_subscription_id = $1', [orderId]);
-        const deleteAddressQuery = await pool.query(
+        
+       
+        await pool.query(
+            'UPDATE paused_subscriptions SET subscription_id = NULL WHERE subscription_id = $1',
+            [orderId]
+        );
+
+        
+        await pool.query(
+            'UPDATE active_subscription SET subscription_id = NULL WHERE id = $1',
+            [orderId]
+        );
+
+        
+        await pool.query(
             'DELETE FROM active_subscription WHERE id = $1',
             [orderId]
         );
 
-       
-
-        response.status(200).send('subscription deleted successfully');
+        response.status(200).send('Subscription deleted successfully');
     } catch (error) {
         console.error('Error executing query', error);
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
 module.exports = {
     createActiveSubscription,
     getActiveSubscription,
