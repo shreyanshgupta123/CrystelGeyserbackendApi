@@ -95,7 +95,7 @@ const getPausedSubscriptionById = async (request, response) => {
             return response.status(404).json({ error: 'Order not found' });
         }
         await pool.query(
-            'UPDATE paused_subscriptions SET subscription_id = $1 WHERE id = $2',
+            'UPDATE paused_subscriptions SET all_subscription_id = $1 WHERE id = $2',
             [subscriptionCheck.rows[0].id, subscriptionId]
         );
 
