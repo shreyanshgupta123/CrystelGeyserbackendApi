@@ -6,9 +6,9 @@ const router = express.Router();
 
 router.post('/', createSubscription);
  router.get('/',  getAllSubscription);
- router.get('/:address_id', getAllSubscriptionById);
+ router.get('/:subscription_id', getAllSubscriptionById);
 // router.delete('/:address_id', deleteAlternateAddress);
- router.put('/:order_id', updateSubscription);
+ router.put('/:subscription_id', updateSubscription);
 
 
 

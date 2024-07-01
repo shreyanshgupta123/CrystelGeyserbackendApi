@@ -68,7 +68,7 @@ const getAllSubscriptionById = async (request, response) => {
 };
 const updateSubscription = async (request, response) => {
     try {
-        const { order_id } = request.params;
+        const { order_id } = request.params.subscription_id;
         const {
             active_subscription_id,
             cancelled_subscription_id,
