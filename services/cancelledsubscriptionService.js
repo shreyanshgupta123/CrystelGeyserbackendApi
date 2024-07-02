@@ -81,6 +81,15 @@ const getCancelledSubscriptionById = async (request, response) => {
             'SELECT * FROM canncelled_subscription WHERE id = $1',
             [subscriptionId]
         );
+        const subscriptionCheck = await pool.query(
+            'SELECT id FROM subscription_table WHERE paused_subscription_id = $1',
+            [orderId]
+        );
+        await pool.query(
+            'UPDATE cancelled_subscription SET subscription_id = $1 WHERE id = $2',
+            [subscriptionCheck.rows[0].id, subscriptionId]
+        );
+
 
         if (existingOrder.rows.length === 0) {
             return response.status(404).json({ error: 'Order not found' });
