@@ -21,13 +21,14 @@ const createPausedSubscription = async (request, response) => {
             expired_date,
             user_id,
             subscription_id,
-            is_paused
+            is_paused,
+            price
         } = request.body;
 
         
         const insertQuery = `
-            INSERT INTO paused_subscriptions (from_date, expired_date, user_id, subscription_id,is_paused)
-            VALUES ($1, $2, $3, $4,$5) RETURNING id
+            INSERT INTO paused_subscriptions (from_date, expired_date, user_id, subscription_id,is_paused,price)
+            VALUES ($1, $2, $3, $4,$5,$6) RETURNING id
         `;
 
         const value=await pool.query(insertQuery, [
@@ -35,7 +36,8 @@ const createPausedSubscription = async (request, response) => {
             expired_date,
             user_id,
             subscription_id,
-            is_paused
+            is_paused,
+            price
         ]);
 
        
