@@ -94,8 +94,8 @@ const generateInvoiceTable = (doc, invoice) => {
     invoiceTableTop,
     "Itemname",
     // "Description",
-    "Unit Cost",
-    "Quantity",
+    "From Date",
+    "To Date",
     "Total Cost"
   );
   generateHr(doc, invoiceTableTop + 20);
@@ -107,10 +107,10 @@ const generateInvoiceTable = (doc, invoice) => {
     generateTableRow(
       doc,
       position,
-      item.item,
+      item.name,
       // item.description,
-      formatCurrency(item.amount / item.quantity),
-      item.quantity,
+      item.fromDate,
+      item.toDate,
       formatCurrency(item.amount)
     );
 
@@ -118,15 +118,15 @@ const generateInvoiceTable = (doc, invoice) => {
   }
 
   const subtotalPosition = invoiceTableTop + (i + 1) * 30;
-  generateTableRow(
-    doc,
-    subtotalPosition,
-    "",
-    "",
-    "Subtotal",
-    "",
-    formatCurrency(invoice.subtotal)
-  );
+//   generateTableRow(
+//     doc,
+//     subtotalPosition,
+//     "",
+//     "",
+//     "Subtotal",
+//     "",
+//     formatCurrency(invoice.subtotal)
+//   );
 
   const paidToDatePosition = subtotalPosition + 20;
   // generateTableRow(
@@ -148,7 +148,7 @@ const generateInvoiceTable = (doc, invoice) => {
     "",
     "Total Amount",
     "",
-    formatCurrency(invoice.subtotal - invoice.paid)
+    formatCurrency(invoice.paid)
   );
   doc.font("Helvetica");
 };
@@ -184,7 +184,7 @@ const generateHr = (doc, y) => {
 };
 
 const formatCurrency = (cents) => {
-  return "$" + (cents / 100).toFixed(2);
+  return "$" + (cents).toFixed(2);
 };
 
 
@@ -196,17 +196,17 @@ const formatDate = (date) => {
   return year + "/" + month + "/" + day;
 };
 
-const getInvoicePdf = async (request, response) => {
+const getSubscriptionInvoicePdf = async (request, response) => {
   try {
       const invoice = request.body;
-      const result = await pool.query('SELECT invoice_number FROM invoice_number_table ORDER BY invoice_number DESC LIMIT 1');
-      let lastInvoiceNr = result.rows[0]?.invoice_number || 0;
+      const result = await pool.query('SELECT quantity FROM invoice_number_subscription_table ORDER BY quantity DESC LIMIT 1');
+      let lastInvoiceNr = result.rows[0]?.quantity || 0;
       let newInvoiceNr = lastInvoiceNr + 1;
 
      
       invoice.invoice_nr = newInvoiceNr;
       console.log(invoice.invoice_nr);
-      await pool.query('INSERT INTO invoice_number_table (invoice_number) VALUES ($1)', [newInvoiceNr]);
+      await pool.query('INSERT INTO invoice_number_subscription_table (quantity) VALUES ($1)', [newInvoiceNr]);
       const filePath = path.join(__dirname, '..', 'invoices', `invoice_1234.pdf`);
 
       
@@ -231,5 +231,5 @@ const getInvoicePdf = async (request, response) => {
 };
 
 module.exports = {
-  getInvoicePdf
+  getSubscriptionInvoicePdf
 };

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getInvoicePdf } = require('../services/createInvoicePdf');
+const { getSubscriptionInvoicePdf } = require('../services/createsubscriptionInvoice');
 
 
 // const invoice = {
@@ -42,7 +42,7 @@ const { getInvoicePdf } = require('../services/createInvoicePdf');
 //   getInvoicePdf(req, res);
 // });
 router.post('/', (req, res) => {
-  getInvoicePdf(req, res);
+  getSubscriptionInvoicePdf(req, res);
 });
 
 module.exports = router;
