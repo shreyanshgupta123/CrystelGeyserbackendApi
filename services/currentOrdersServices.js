@@ -19,11 +19,8 @@ const addCurrentOrders = async (request, response) => {
             product_id,
             price,
             unit,
-            expected_delivery,
             payment_method
         } = request.body;
-
-       
 
         const userResult = await pool.query(
             'SELECT id FROM user_details WHERE id = $1',
@@ -41,15 +38,15 @@ const addCurrentOrders = async (request, response) => {
             return response.status(404).json({ error: 'product not found' });
         }
 
+        const userid = userResult.rows[0].id;
+        const productid = productResult.rows[0].id;
 
-
-        const  userid  = userResult.rows[0].id;
-        const  productid  = productResult.rows[0].id;
-        
+        const currentDate = new Date();
+        const expectedDelivery = new Date(currentDate.setDate(currentDate.getDate() + 4));
 
         const insertQuery = await pool.query(
-            'INSERT INTO current_order_details (user_id,product_id, price, unit, expected_delivery, payment_method) VALUES ($1, $2, $3, $4, $5,$6)',
-            [userid,productid, price, unit, expected_delivery, payment_method]
+            'INSERT INTO current_order_details (user_id, product_id, price, unit, expected_delivery, payment_method) VALUES ($1, $2, $3, $4, $5, $6)',
+            [userid, productid, price, unit, expectedDelivery, payment_method]
         );
 
         response.status(200).json({ message: 'Success' });
@@ -58,6 +55,7 @@ const addCurrentOrders = async (request, response) => {
         response.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
 const getCurrentOrders = async (request, response) => {
     try {
         const cartItems = await pool.query('SELECT * FROM current_order_details');

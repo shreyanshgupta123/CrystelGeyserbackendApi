@@ -19,7 +19,6 @@ const addDeliveredOrders = async (request, response) => {
             product_id,
             price,
             unit,
-            expected_delivery,
             payment_method,
         } = request.body;
 
@@ -48,8 +47,8 @@ const addDeliveredOrders = async (request, response) => {
         
 
         const insertQuery = await pool.query(
-            'INSERT INTO delivered_orders (user_id,product_id, price, unit, expected_delivery, payment_method) VALUES ($1, $2, $3, $4, $5,$6)',
-            [userid,productid, price, unit, expected_delivery, payment_method]
+            'INSERT INTO delivered_orders (user_id,product_id, price, unit, payment_method) VALUES ($1, $2, $3, $4, $5)',
+            [userid,productid, price, unit, payment_method]
         );
 
         response.status(200).json({ message: 'Success' });
