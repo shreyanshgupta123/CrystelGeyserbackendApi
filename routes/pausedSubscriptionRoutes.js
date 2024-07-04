@@ -4,11 +4,9 @@ const userController = require('../services/pausedsubscriptionServices');
 
 
 router.post('/', userController.createPausedSubscription);
-// router.put('/:userId', userController.updateUserDetails);
  router.delete('/:subscription_id', userController.deletePausedSubscription);
 router.get('/', userController.getPausedSubscription);
  router.get('/:subscription_id', userController.getPausedSubscriptionById);
-// router.post('/login', userController.getUserDetailsByName);
 
 
 module.exports = router;

@@ -30,6 +30,7 @@ const statesRoutes = require('./routes/statesRoutes');
 const countriesRoutes = require('./routes/countriesRoutes');
 const newsRoutes = require('./routes/newsRoutes');
 const createSubscriptionInvoiceRoutes = require('./routes/createsubscriptionInvoiceRoutes');
+const setupSwagger = require('./swagger');
 require('dotenv').config();
 const cors = require('cors');
 
@@ -68,4 +69,8 @@ app.use('/api/cities', statesRoutes);
 app.use('/api/countries', countriesRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/createsubscriptioninvoice', createSubscriptionInvoiceRoutes);
+
+
+setupSwagger(app);
+
 module.exports = app;

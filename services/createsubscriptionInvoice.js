@@ -184,7 +184,7 @@ const generateHr = (doc, y) => {
 };
 
 const formatCurrency = (cents) => {
-  return "$" + (cents).toFixed(2);
+  return "$" + (cents);
 };
 
 
